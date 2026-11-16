@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="pt">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,6 +16,7 @@
 <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/img/pixerio-logo.png">
 <link rel="stylesheet" href="assets/css/px.css">
+<link rel="stylesheet" href="assets/css/motion.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Organization","LocalBusiness"],"@id":"https://pixerio.com/#organization","name":"Pixerio","url":"https://pixerio.com/","logo":"https://pixerio.com/assets/img/pixerio-logo.png","image":"https://pixerio.com/assets/img/pixerio-logo.png","description":"Creative and digital services company in Bengaluru: brand and design, digital platforms, video and motion, 3D and immersive, learning, search and marketing.","email":"info@pixerio.com","telephone":"+91-99000-71841","address":{"@type":"PostalAddress","streetAddress":"JC Nagar","addressLocality":"Bengaluru","addressRegion":"Karnataka","addressCountry":"IN"},"areaServed":"IN","sameAs":["https://360video.pixerio.com/Pixerio-360-room/"]}]}</script>
 </head>
 <body data-page="index.html">
@@ -72,11 +73,25 @@
     </div>
 
     <div class="feature" style="margin-top:clamp(36px,6vw,72px)" data-reveal>
-      <div class="feature__media" data-hero-art>
-        <picture>
-          <source srcset="assets/img/work/Lamda-Components-Stall-Design.webp" type="image/webp">
-          <img src="assets/img/work/Lamda-Components-Stall-Design.jpg" alt="Lamda Components exhibition stand designed by Pixerio" width="800" height="600" fetchpriority="high">
-        </picture>
+      <div class="deck" data-deck role="group" aria-label="Selected Pixerio work">
+        <figure class="deck__card" data-pos="center">
+          <picture>
+            <source srcset="assets/img/work/Lamda-Components-Stall-Design.webp" type="image/webp">
+            <img src="assets/img/work/Lamda-Components-Stall-Design.jpg" alt="Lamda Components exhibition stand designed by Pixerio" width="800" height="600" fetchpriority="high">
+          </picture>
+        </figure>
+        <figure class="deck__card" data-pos="left">
+          <picture>
+            <source srcset="assets/img/work/Cornucopia-Website.webp" type="image/webp">
+            <img src="assets/img/work/Cornucopia-Website.jpg" alt="Cornucopia corporate website built by Pixerio" width="800" height="600" loading="lazy">
+          </picture>
+        </figure>
+        <figure class="deck__card" data-pos="right">
+          <picture>
+            <source srcset="assets/img/work/Hitachi-Brochure.webp" type="image/webp">
+            <img src="assets/img/work/Hitachi-Brochure.jpg" alt="Hitachi corporate brochure designed by Pixerio" width="800" height="600" loading="lazy">
+          </picture>
+        </figure>
       </div>
       <div>
         <p class="eyebrow">In the portfolio</p>
@@ -388,5 +403,6 @@
 </footer>
 
 <script src="assets/js/px.js" defer></script>
+<script src="assets/js/motion.js" defer></script>
 </body>
 </html>

@@ -74,6 +74,54 @@ permissions for the four quotes, and project imagery for 3D, video and learning.
 
 ---
 
+## 0c. v3.0 — motion layer, ported from uxfolio.io
+
+Brief: take the animation, effects and transitions on **uxfolio.io** and give them to this
+build. The design, colour, type and artwork are unchanged — only movement was added.
+
+**What was measured on the source site** (its landing page ships no animation library; it is
+CSS keyframes plus two small JS behaviours):
+
+| Sourced behaviour | Measured on uxfolio.io | Implemented here as |
+|---|---|---|
+| Marker highlight | `<img>` under the word, `clip-path: inset(0 100% 0 0)` → `inset(0)`, `.7s cubic-bezier(.16,1,.3,1)` | `.m-mark` — logo-green SVG swash behind the emphasis phrase, wiped in by `background-size` |
+| Hero card shuffle | three cards, `translate3d(±18vw)`, `rotate(∓3deg)`, `scale(.92)`, centre `scale(1)` and top `z-index`, positions swapped on a loop | `.deck` — same fan and angles, rotated by a timer so it can pause |
+| Content rise | `translateY(1.5rem)` + opacity, 700ms | hero/heading entrance, 900ms on `--ease` |
+| Cards rise | `translateY(4rem)` + opacity, 850ms | deck + grid reveals |
+| Marquee rails | duplicated track, `linear infinite` | client ribbon (kept) and a new work rail on the portfolio page |
+| Stacking panels | full-width panels pinned as the next one arrives | the three process steps on every page that carries them |
+| FAQ grow | answer height animated, not snapped | `.faq__body` height transition, `<details>` still the control |
+
+**Files.** `assets/css/motion.css` and `assets/js/motion.js`, loaded after `px.css` / `px.js`
+on all 18 pages by `px_apply.py` (adding it there means one place to wire, and the injector
+stays idempotent). `index.html` is excluded from that script, so its `<link>`/`<script>` lines
+are maintained by hand — keep them in sync.
+
+**Guarantees kept from v2.4.**
+
+- `prefers-reduced-motion: reduce` and the header **Pause motion** control still remove all of
+  it. The deck timer stops on pause, on hover, when scrolled out of view, and in a hidden tab.
+- Nothing is scrolled for you, nothing follows the pointer, and no motion hides content: with
+  JS off, the marker simply is not drawn and the deck shows its centre card.
+- Hover was restored (tile zoom 1.05, card lift 5px, arrow nudge, button sheen) because
+  "effects" was the brief; it is still colour, edge and shadow, never displacement of the
+  thing you are about to click.
+- The page transition is opacity-only on `body`. A transform or filter there would re-parent
+  the fixed header and make it jump on every navigation.
+
+**Two traps worth keeping in mind.**
+
+1. `.m-mark` must stay `display:inline`. As an `inline-block` the punctuation after the phrase
+   is pushed onto its own line.
+2. The stacking step needs `transform: … !important`: `px.js` writes an inline
+   `transform: none` on `.step` when it reveals it, and inline beats the stylesheet.
+
+**Tuning.** Card angles and offsets: `--deck-w` and the `[data-pos]` rules in `motion.css`.
+Shuffle speed: the `3600` interval in `motion.js`. Marker colour: the `fill` in the SVG data
+URI (currently logo green at `fill-opacity:.5`).
+
+---
+
 ## 1. What is in the build
 
 | # | Page | Live path it mirrors | Section |
