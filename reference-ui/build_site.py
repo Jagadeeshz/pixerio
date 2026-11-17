@@ -269,6 +269,40 @@ QUOTES = [
          role="CEO", org="Home appliance company", sector="platform build"),
 ]
 
+
+# ---------------------------------------------------------------- service art
+# Original line art, one hue per discipline, drawn for this build. The live site
+# carries a single-hue line illustration per service card; these keep that idea
+# (thin line, sparkle marks, one colour) with Pixerio's own geometry and a tinted
+# plate behind each one. Nothing is traced or copied from the live artwork.
+ART = {
+    "3d": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M32 7 56 20v24L32 57 8 44V20z"/><path d="M8 20l24 12 24-12M32 32v25"/>
+<circle cx="53" cy="11" r="1.8" fill="currentColor" stroke="none"/>
+<path d="M6 9h4M8 7v4"/></svg>""",
+    "digital": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<rect x="7" y="12" width="50" height="40" rx="4"/><path d="M7 22h50"/>
+<circle cx="13" cy="17" r="1.4" fill="currentColor" stroke="none"/>
+<circle cx="19" cy="17" r="1.4" fill="currentColor" stroke="none"/>
+<path d="M13 29h17v15H13zM36 29h15M36 35h15M36 41h10"/></svg>""",
+    "video": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<rect x="7" y="17" width="50" height="30" rx="3"/>
+<path d="M7 25h6M7 33h6M7 41h6M51 25h6M51 33h6M51 41h6"/>
+<path d="M27 25l11 7-11 7z"/>
+<path d="M47 9h4M49 7v4"/></svg>""",
+    "brand": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="25" cy="24" r="12"/><rect x="28" y="28" width="24" height="24" rx="4"/>
+<path d="M10 44h12M10 50h8"/><circle cx="54" cy="11" r="1.8" fill="currentColor" stroke="none"/></svg>""",
+    "learning": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M10 13h17a6 6 0 0 1 6 6v30a7 7 0 0 0-7-7H10z"/>
+<path d="M54 13H37a6 6 0 0 0-6 6v30a7 7 0 0 1 7-7h16z"/>
+<circle cx="46" cy="43" r="9"/><path d="m41.5 43 3.2 3.2L51 39"/></svg>""",
+    "search": """<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="26" cy="26" r="13"/><path d="m36 36 10 10"/>
+<path d="M19 31v-5M26 31v-10M33 31v-7"/>
+<path d="M51 9h4M53 7v4"/></svg>""",
+}
+
 # ---------------------------------------------------------------- chrome
 def jsonld(page_title, desc, path, kind=None, extra=None):
     org = {
@@ -448,8 +482,9 @@ def footer():
 """
 
 
-def page_head(crumb, h1, sub, eyebrow=None, sub2=None, chips=None):
+def page_head(crumb, h1, sub, eyebrow=None, sub2=None, chips=None, art=None):
     chip_html = "".join(f'<span class="chip">{c}</span>' for c in (chips or []))
+    art_html = f'<span class="page-head__art" aria-hidden="true">{art}</span>' if art else ""
     return f"""
 <main id="main">
 <section class="page-head">
@@ -462,6 +497,7 @@ def page_head(crumb, h1, sub, eyebrow=None, sub2=None, chips=None):
     {('<p class="lead" style="margin-top:.9rem">' + sub2 + '</p>') if sub2 else ''}
     {('<div class="page-head__foot">' + chip_html + '</div>') if chip_html else ''}
   </div>
+  {art_html}
   <div class="spectrum" aria-hidden="true"></div>
 </section>
 """
@@ -658,6 +694,7 @@ def capability_wall():
     motion, pause motion and a narrow screen."""
     cards = "".join(f"""
       <article class="wall__card" data-reveal style="--i:{i}">
+        <span class="wall__art" aria-hidden="true">{ART[s['icon']]}</span>
         <span class="wall__n num">{s['num']} / 06</span>
         <h3>{s['name']}</h3>
         <p>{s['buy']}</p>
@@ -805,7 +842,7 @@ def build_service(svc):
     others = [x for x in SERVICES if x["slug"] != svc["slug"]][:3]
     others_html = service_rows(others)
     s += page_head(svc["name"], svc["h1"], svc["sub"], eyebrow=f"Service {svc['num']} of 06",
-                   chips=[svc["name"], svc["buy"]])
+                   chips=[svc["name"], svc["buy"]], art=ART[svc["icon"]])
 
     # ---- 01 capability · 02 scenario -------------------------------------------------
     s += f"""
@@ -1204,8 +1241,12 @@ def build_blog():
         ("Film length is a decision, not an edit", "Video and motion",
          "The thirty-second version is written, not cut."),
     ]
+    CAT_ICON = {"Brand and design": "brand", "Digital platforms": "digital",
+                "3D and immersive": "3d", "Learning": "learning",
+                "Search and marketing": "search", "Video and motion": "video"}
     cards = "".join(f"""
       <a class="post" href="article.html" data-reveal style="--i:{i}">
+        <span class="post__thumb post__thumb--{CAT_ICON.get(p[1], 'brand')}" aria-hidden="true">{ART[CAT_ICON.get(p[1], 'brand')]}</span>
         <span class="post__cat">{p[1]}</span>
         <h3 class="post__title">{p[0]}</h3>
         <p class="post__sum">{p[2]}</p>

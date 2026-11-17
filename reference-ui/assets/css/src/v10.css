@@ -425,6 +425,69 @@ main{display:block}
 .evidence__t{font-weight:500;color:var(--v-ink)}
 .evidence__v{font-size:.86rem;color:var(--v-muted);text-align:right}
 
+/* ---------- 8b. a discipline's own wash, keyed off body[data-disc] ---------- */
+body[data-disc="01"]{--disc:0,179,189}
+body[data-disc="02"]{--disc:48,192,240}
+body[data-disc="03"]{--disc:225,19,110}
+body[data-disc="04"]{--disc:57,179,74}
+body[data-disc="05"]{--disc:244,156,66}
+body[data-disc="06"]{--disc:33,127,195}
+body[data-disc] .page-head::after{background:
+  radial-gradient(48vw 40vw at 88% -12%,rgba(var(--disc),.20),transparent 66%),
+  radial-gradient(38vw 32vw at 2% 108%,rgba(var(--disc),.11),transparent 70%),
+  radial-gradient(30vw 26vw at 62% 118%,rgba(0,179,189,.10),transparent 72%)}
+/* every band on a service page carries a trace of that discipline's colour,
+   so the page reads as one brand rather than a white sheet with one tinted box */
+body[data-disc] .band{background:linear-gradient(180deg,rgba(var(--disc),.03),transparent 65%)}
+body[data-disc] .band--quiet{
+  background:linear-gradient(180deg,rgba(var(--disc),.07),rgba(var(--disc),.025));
+  border-top-color:rgba(var(--disc),.16)}
+body[data-disc] .band--soft{background:linear-gradient(180deg,rgba(var(--disc),.05),rgba(255,255,255,.6))}
+/* tinted grounds for the quiet bands elsewhere on the site */
+.band--quiet{background:linear-gradient(180deg,#F5F9FA,#F2F8FB 60%,#F6FAFC)}
+/* the illustration sits in the band, not in a box */
+.page-head__art{position:absolute;right:clamp(18px,5vw,84px);top:50%;transform:translateY(-50%);
+  width:clamp(120px,13vw,200px);color:var(--v-teal-ink);opacity:.45;
+  pointer-events:none;z-index:0}
+.page-head__art svg{width:100%;height:auto}
+body[data-disc="01"] .page-head__art{color:var(--v-teal-ink)}
+body[data-disc="02"] .page-head__art{color:#00688F}
+body[data-disc="03"] .page-head__art{color:#A5104F}
+body[data-disc="04"] .page-head__art{color:#2E7D32}
+body[data-disc="05"] .page-head__art{color:#A85B00}
+body[data-disc="06"] .page-head__art{color:var(--v-blue-ink)}
+@media (max-width:1180px){.page-head__art{display:none}}
+
+/* ---------- 8c. designed thumbnails for the insights cards ----------
+   Not photography and not blobs: the discipline's own line art, held very low
+   over a tinted ground, with a hairline grid. Same system as the service cards. */
+.post__thumb{position:relative;display:grid;place-items:center;aspect-ratio:16/9;
+  border-radius:var(--v-r-sm);margin-bottom:14px;overflow:hidden;
+  background:linear-gradient(150deg,#F4FBFB,#FFFFFF 70%);
+  border:1px solid var(--v-line-soft)}
+.post__thumb::before{content:"";position:absolute;inset:0;opacity:.5;
+  background-image:
+    linear-gradient(to right,rgba(18,50,74,.05) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(18,50,74,.05) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(70% 70% at 50% 50%,#000,transparent 82%);
+  -webkit-mask-image:radial-gradient(70% 70% at 50% 50%,#000,transparent 82%)}
+.post__thumb svg{position:relative;width:36%;height:auto;color:var(--v-teal-ink);opacity:.55;
+  transition:transform .5s var(--v-ease),opacity .4s}
+.post:hover .post__thumb svg{transform:translateY(-2px) scale(1.04);opacity:.75}
+.post__thumb--digital{background:linear-gradient(150deg,#F2FAFE,#FFFFFF 70%)}
+.post__thumb--digital svg{color:#00688F}
+.post__thumb--video{background:linear-gradient(150deg,#FEF3F7,#FFFFFF 70%)}
+.post__thumb--video svg{color:#A5104F}
+.post__thumb--brand{background:linear-gradient(150deg,#F4FBF4,#FFFFFF 70%)}
+.post__thumb--brand svg{color:#2E7D32}
+.post__thumb--learning{background:linear-gradient(150deg,#FEF8F1,#FFFFFF 70%)}
+.post__thumb--learning svg{color:#A85B00}
+.post__thumb--search{background:linear-gradient(150deg,#F3F8FD,#FFFFFF 70%)}
+.post__thumb--search svg{color:var(--v-blue-ink)}
+.post__thumb--3d{background:linear-gradient(150deg,#F5F4FE,#FFFFFF 70%)}
+.post__thumb--3d svg{color:#5B4BC4}
+
 /* ==========================================================================
    9. Numbered rows, stats, process, table
    ========================================================================== */

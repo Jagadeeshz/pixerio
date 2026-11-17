@@ -118,6 +118,25 @@ html[data-motion="paused"] .rail__track{animation-play-state:paused}
   border-top:1px solid var(--v-line-soft)}
 .wall__link{position:absolute;inset:0;z-index:2}
 /* one documented hue per discipline — teal, cyan, magenta, green, amber, blue */
+.wall__art{display:grid;place-items:center;width:clamp(64px,7vw,84px);aspect-ratio:1;
+  border-radius:20px;margin-bottom:clamp(14px,1.6vw,20px);
+  background:rgba(0,179,189,.10);color:var(--v-teal-ink);
+  transition:transform .45s var(--v-ease),background-color .4s}
+.wall__art svg{width:54%;height:54%}
+.wall>.wall__card:hover .wall__art{transform:translateY(-3px)}
+/* one hue per discipline, and a tinted ground under each card */
+.wall>.wall__card:nth-child(1) .wall__art{background:rgba(0,179,189,.10);color:var(--v-teal-ink)}
+.wall>.wall__card:nth-child(2) .wall__art{background:rgba(48,192,240,.13);color:#00688F}
+.wall>.wall__card:nth-child(3) .wall__art{background:rgba(225,19,110,.08);color:#A5104F}
+.wall>.wall__card:nth-child(4) .wall__art{background:rgba(57,179,74,.11);color:#2E7D32}
+.wall>.wall__card:nth-child(5) .wall__art{background:rgba(244,156,66,.15);color:#A85B00}
+.wall>.wall__card:nth-child(6) .wall__art{background:rgba(33,127,195,.11);color:var(--v-blue-ink)}
+.wall>.wall__card:nth-child(1){background:linear-gradient(165deg,#F1FCFC,#FFFFFF 62%)}
+.wall>.wall__card:nth-child(2){background:linear-gradient(165deg,#F1FAFE,#FFFFFF 62%)}
+.wall>.wall__card:nth-child(3){background:linear-gradient(165deg,#FFF4F8,#FFFFFF 62%)}
+.wall>.wall__card:nth-child(4){background:linear-gradient(165deg,#F3FBF3,#FFFFFF 62%)}
+.wall>.wall__card:nth-child(5){background:linear-gradient(165deg,#FFF8F1,#FFFFFF 62%)}
+.wall>.wall__card:nth-child(6){background:linear-gradient(165deg,#F3F8FD,#FFFFFF 62%)}
 .wall>.wall__card:nth-child(1)::before{background:var(--v-teal)}
 .wall>.wall__card:nth-child(2)::before{background:var(--v-cyan)}
 .wall>.wall__card:nth-child(3)::before{background:var(--v-magenta)}
