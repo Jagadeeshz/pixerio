@@ -3,3 +3,5 @@ desktop.ini
 .DS_Store
 *.log
 .hermes/
+__pycache__/
+*.pyc

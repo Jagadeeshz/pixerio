@@ -12,7 +12,7 @@ import os
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "assets", "css")
 SITE = ["tokens.css", "v10.css"]
-HOME = ["v10-home.css"]
+HOME = ["v10-home.css", "v10-hero3d.css"]
 BANNER = "/* Pixerio bundle - generated from assets/css/src/*.css. Edit the sources. */\n\n"
 
 

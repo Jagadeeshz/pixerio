@@ -118,6 +118,44 @@ v9's entrance/magnetic/parallax pass (`motion.js`) and the FAQ height tween (app
 hero: the v9 conveyor belt needed `hero-belt.js` and a canvas tied to v9 markup, so it is now
 a CSS rail — same six service links, same hover language, no canvas.
 
+### The hero stage (v10.1)
+
+The homepage hero is a three-act composition built from the reference clip
+(720x576, 30fps, 14.6s): tall 3:4 panels, one squared to camera at a time, its
+neighbours at 60-70 degrees of Y rotation smearing into spectrum ribbons, a soft
+cyan wash above and below, and a swap every ~1.8s.
+
+| Act | Time | What happens |
+|---|---|---|
+| 01 fragmented | 0.0-6.0s | six panels travel right to left on a conveyor, each on its own angle and height, unresolved (amber dot, muted, broken layout inside) |
+| 02 transform | 6.0-13.5s | a spectrum beam sweeps left to right **above** the panels; each panel it passes squares up and resolves (green dot, full colour, its layout fixes itself) |
+| 03 connected | 13.5-19.0s | the six close into a 3x2 lattice, dashed connectors draw between them, the spectrum runs through the seam |
+| 04 loop | 19.0-21.0s | the composition exhales and restarts — no cut |
+
+Each panel is an independent DOM element with its own content and gradient; the
+"problem" and "solution" states are the same markup (`.vis-brand`, `.vis-web`,
+`.vis-film`, `.vis-3d`, `.vis-learn`, `.vis-mkt` inside the panel) switched by
+`data-solved`, so nothing is a baked image and nothing was invented for it.
+
+- `assets/css/src/v10-hero3d.css` — stage, panels, the six before/after visuals
+- `assets/js/hero-stage.js` — one clock, two canvases (ribbons behind, light above), the loop
+- Loaded on `index.html` only; the other 16 pages never download it
+
+**Stopped states are resolved states.** `prefers-reduced-motion`, the header
+**Pause motion** control, a hidden tab and a scrolled-away hero all freeze the
+same frame: the act-3 lattice with all six solved. Nothing is left half-faded and
+nothing is left invisible. `window.PixerioStage.frame(t)` renders any moment, so
+the pause gate can be checked without waiting on a real clock.
+
+**Kept.** The headline, lead, both controls and the meta chips are byte-identical
+to the previous hero, and the left 40% stays clear because the stage clips at its
+own edge. The six service links live in the capability wall below the hero.
+
+**Not used, deliberately.** No Three.js: the panels must stay DOM nodes so their
+text is sharp and their content is real, and the only thing that genuinely needed
+per-pixel work is the light, which two 2D canvases handle at a fraction of the
+cost. No particles, no post-processing, no video file.
+
 **Build order** (all three are idempotent):
 
 ```

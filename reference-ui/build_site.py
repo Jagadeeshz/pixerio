@@ -687,48 +687,73 @@ def capability_wall():
 
 
 def hero_band():
-    """Homepage statement band: eyebrow, the oversized claim, paired controls,
-    then the six services as a rail that bleeds off both edges.
+    """Homepage hero: the claim on the left 40%, the stage on the right.
 
-    Design Pickle's structure (dark band, big type, two pills, real work running
-    past the frame), rendered in the Pixerio palette. The rail duplicates the six
-    cards once for a seamless loop; the repeat is aria-hidden so assistive tech
-    and the tab order only see six links.
+    The stage is six independent DOM panels driven by hero-stage.js — act 1 the
+    fragmented problem, act 2 the spectrum trail resolving each one, act 3 the
+    connected lattice. Every word of the headline, the lead and both controls is
+    exactly what shipped before; only the composition beside them is new.
     """
-    card = ('<a class="rail__card" href="{slug}.html">'
-            '<span class="rail__top"><span class="rail__icon">{icon}</span>'
-            '<span class="rail__num num">{num}</span></span>'
-            '<span class="rail__name">{name}</span>'
-            '<span class="rail__buy">{buy}</span>'
-            '<span class="rail__go">What this covers ' + ARROW_R + '</span></a>')
-    cards = "".join(card.format(slug=s["slug"], icon=IC[s["icon"]], num=s["num"],
-                                name=s["name"], buy=s["buy"]) for s in SERVICES)
-    dup = "".join(card.format(slug=s["slug"], icon=IC[s["icon"]], num=s["num"],
-                              name=s["name"], buy=s["buy"])
-                  .replace('<a class="rail__card"', '<a class="rail__card" aria-hidden="true" tabindex="-1"')
-                  for s in SERVICES)
+    PANEL = {
+        "3d":        ("vis-3d",    ("#6C5CE7", "#217FC3", "#00B3BD"), "Immersive presentation"),
+        "digital":   ("vis-web",   ("#217FC3", "#30C0F0", "#00B3BD"), "Polished platforms"),
+        "video":     ("vis-film",  ("#E1136E", "#7C3AED", "#217FC3"), "Compelling film"),
+        "brand":     ("vis-brand", ("#49AD48", "#B8D550", "#F49C42"), "Consistent identity"),
+        "learning":  ("vis-learn", ("#00B3BD", "#49AD48", "#B8D550"), "Interactive learning"),
+        "search":    ("vis-mkt",   ("#F49C42", "#E1136E", "#217FC3"), "Connected campaigns"),
+    }
+    CUBE = ('<svg viewBox="0 0 100 100" aria-hidden="true">'
+            '<path class="v3d-far" d="M18 30h64v64H18z" transform="translate(10,-12)"/>'
+            '<path class="v3d-far" d="M18 30 28 18h64L82 30M82 30v64L92 82V18"/>'
+            '<path d="M8 38h64v54H8z"/><path d="M8 38 18 26h64L72 38M72 38v54"/></svg>')
+
+    panels = []
+    for i, sv in enumerate(SERVICES):
+        vis, (g1, g2, g3), label = PANEL[sv["icon"]]
+        inner = CUBE if vis == "vis-3d" else (
+            '<i></i><i></i><i></i>' if vis in ("vis-brand", "vis-learn", "vis-mkt")
+            else ('<i></i>' if vis == "vis-film" else '<i></i><i></i><i></i>'))
+        panels.append(f"""
+      <article class="stg-panel" data-p="{i}" style="--g1:{g1};--g2:{g2};--g3:{g3}">
+        <div class="stg-panel__inner">
+          <span class="stg-panel__tag"><i class="stg-panel__dot"></i>{sv['num']} &middot; {sv['name']}</span>
+          <div class="stg-vis {vis}">{inner}</div>
+          <span class="stg-panel__name">{label}</span>
+          <span class="stg-panel__promise">{sv['buy']}</span>
+        </div>
+      </article>""")
+
     return f"""
 <main id="main">
 <section class="hero">
-  <div class="wrap hero__inner">
-    <p class="eyebrow">Six disciplines &middot; one partner</p>
-    <h1><span class="hero__l1">Ideas are everywhere.</span> <span class="hero__l2">We make them matter.</span></h1>
-    <p class="lead">One partner for connected creative, digital and technology solutions &mdash;
-    taking your business from brand definition through to a launched, findable product.</p>
-    <div class="actions">
-      <a class="btn" href="contact-us.html" data-magnetic="0.25">
-        <span class="btn__label">Discuss Your Project</span></a>
-      <a class="btn btn--ghost" href="pixerio-portfolio.html">
-        <span class="btn__label">See the work</span></a>
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <p class="eyebrow">Six disciplines &middot; one partner</p>
+      <h1><span class="hero__l1">Ideas are everywhere.</span> <span class="hero__l2">We make them matter.</span></h1>
+      <p class="lead">One partner for connected creative, digital and technology solutions &mdash;
+      taking your business from brand definition through to a launched, findable product.</p>
+      <div class="actions">
+        <a class="btn" href="contact-us.html" data-magnetic="0.25">
+          <span class="btn__label">Discuss Your Project</span></a>
+        <a class="btn btn--ghost" href="pixerio-portfolio.html">
+          <span class="btn__label">See the work</span></a>
+      </div>
+      <div class="hero__meta">
+        <span class="chip">JC Nagar, Bengaluru</span>
+        <span class="chip">Six services</span>
+        <span class="chip">22 documented projects</span>
+      </div>
     </div>
-    <div class="hero__meta">
-      <span class="chip">JC Nagar, Bengaluru</span>
-      <span class="chip">Six services</span>
-      <span class="chip">22 documented projects</span>
+    <div class="hero__stage">
+      <div class="stage" data-stage data-ready="0" aria-hidden="true">
+        <canvas class="stage__canvas"></canvas>{''.join(panels)}
+        <canvas class="stage__light"></canvas>
+      </div>
+      <p class="stage__caption">
+        <span data-stage-caption><b>01</b> Six separate problems</span>
+        <span class="stage__bar"><i></i></span>
+      </p>
     </div>
-  </div>
-  <div class="hero__rail rail">
-    <div class="rail__track">{cards}{dup}</div>
   </div>
 </section>
 """
@@ -753,7 +778,7 @@ def build_index():
     s += process()
     s += quotes_block()
     s += cta_band()
-    s += footer()
+    s += footer().replace("</body>", '<script src="assets/js/hero-stage.js" defer></script>' + chr(10) + '</body>', 1)
     return ("index.html", s)
 
 
