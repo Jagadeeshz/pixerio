@@ -186,3 +186,25 @@
     });
   });
 })();
+
+/* ==========================================================================
+   Creative layer: pointer spotlight, service chapter rail, portfolio rail
+   Progressive enhancement only — every piece is inert without JS and dies
+   under prefers-reduced-motion.
+   ========================================================================== */
+(function creative () {
+  "use strict";
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduce) return;
+
+  /* 1. spotlight: the card does not move, only the light does */
+  var cards = document.querySelectorAll(".wall__card,.tile,.post,.svc-card");
+  cards.forEach(function (card) {
+    card.addEventListener("pointermove", function (e) {
+      var r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", ((e.clientX - r.left) / r.width * 100).toFixed(1) + "%");
+      card.style.setProperty("--my", ((e.clientY - r.top) / r.height * 100).toFixed(1) + "%");
+    }, { passive: true });
+  });
+
+})();

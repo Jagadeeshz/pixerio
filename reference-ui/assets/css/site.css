@@ -758,3 +758,78 @@ html[data-motion="paused"] [data-reveal]{opacity:1;transform:none}
   .page-head__foot{gap:8px}
   table.scope{display:block;overflow-x:auto;white-space:nowrap}
 }
+
+/* ---- v10-creative.css ---- */
+/* ==========================================================================
+   Pixerio — creative editorial layer (v10.3)
+   --------------------------------------------------------------------------
+   What was taken from the award-winning references (lusion.co, dogstudio.co —
+   screenshotted): structure carried by oversized numerals, a near-empty stage
+   that lets one element speak, micro-labels in wide tracking, and a single
+   accent hue per moment. What was NOT taken: full-screen preloaders (they
+   delay the LCP element, which README §3.2 forbids), WebGL stages and custom
+   cursors that follow the pointer on every element.
+
+   Everything here is additive: no content changes, one stylesheet, one small
+   JS block, and it all dies under prefers-reduced-motion.
+   ========================================================================== */
+
+/* ---------- 1. type: more contrast, tighter tracking, wide micro-labels ------ */
+:root{
+  --v-display:clamp(2.7rem,6vw,5.2rem);
+  --v-h2:clamp(1.9rem,3.5vw,3.2rem);
+}
+h1{letter-spacing:-.038em}
+h2{letter-spacing:-.03em}
+.eyebrow{letter-spacing:.2em}
+.lead{font-size:clamp(1.04rem,1.32vw,1.28rem);line-height:1.5}
+
+/* the claim lines get optical weight: light on the run, heavy on the landing */
+.hero h1 .hero__l1{font-weight:300;letter-spacing:-.042em}
+.hero h1 .hero__l2{font-weight:600}
+.cse__claim{font-weight:400;letter-spacing:-.025em;line-height:1.18}
+.page-head h1{font-weight:600}
+
+/* ---------- 2. ghost chapter numerals, drawn from a CSS counter ------------
+   Zero markup: main counts its bands, each band paints its own number. */
+main{counter-reset:band}
+.band{counter-increment:band}
+.band::after{
+  content:counter(band,decimal-leading-zero);
+  position:absolute;right:clamp(12px,3vw,48px);top:clamp(8px,1.6vw,26px);
+  z-index:0;pointer-events:none;user-select:none;
+  font-size:clamp(4rem,11vw,10rem);font-weight:200;line-height:.8;letter-spacing:-.06em;
+  color:transparent;-webkit-text-stroke:1px rgba(18,50,74,.09);
+  font-variant-numeric:tabular-nums
+}
+.band--navy::after,.band--soft::after{-webkit-text-stroke-color:rgba(255,255,255,.16)}
+.band--soft::after{-webkit-text-stroke-color:rgba(18,50,74,.12)}
+.band>.wrap{position:relative;z-index:1}
+
+/* ---------- 3. pointer spotlight on cards (does not move the card) --------- */
+.wall__card,.tile,.post,.svc-card,.panel{position:relative;isolation:isolate}
+.wall__card::after,.tile::before,.post::before,.svc-card::after{
+  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;
+  opacity:0;transition:opacity .4s var(--v-ease);
+  background:radial-gradient(220px 220px at var(--mx,50%) var(--my,50%),
+    rgba(0,179,189,.16),rgba(33,127,195,.08) 45%,transparent 72%)
+}
+.wall__card:hover::after,.tile:hover::before,.post:hover::before,.svc-card:hover::after{opacity:1}
+
+/* ---------- 4. an editorial cascade instead of a symmetrical grid ---------
+   Offset by margin, never transform: the reveal animation owns transform. */
+@media (min-width:900px){
+  .work--stagger>.tile:nth-child(3n+2){margin-top:clamp(24px,3.4vw,52px)}
+  .work--stagger>.tile:nth-child(3n+3){margin-top:clamp(10px,1.6vw,26px)}
+}
+
+/* ---------- 6. grain, the way the references hold a stage together --------- */
+.grain{
+  position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.028;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")
+}
+
+/* ---------- 7. static states ---------- */
+@media (prefers-reduced-motion:reduce){
+  .wall__card::after,.tile::before,.post::before,.svc-card::after{display:none}
+}

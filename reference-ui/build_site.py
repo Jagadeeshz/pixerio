@@ -375,6 +375,7 @@ def head(title, desc, page, ld="", body_class="", hero=False, disc=""):
 <body data-page="{page}" class="{body_class}"{disc_attr}>
 <a class="skip" href="#main">Skip to content</a>
 <div class="progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 """
 
 
@@ -526,8 +527,10 @@ def work_grid(items, heading="Selected work", eyebrow="Evidence", band="quiet",
     more = (f'<a class="link" href="pixerio-portfolio.html">All 22 projects {ARROW_R}</a>'
             if link else '')
     intro_html = f'<p>{intro}</p>' if intro else ''
+    anchor = ' id="evidence" data-chapter="Evidence"' if "Evidence" in eyebrow else ''
+    rail = ' work--rail' if 'work--rail' in cls else ''
     return f"""
-<section class="band band--{band} {cls}">
+<section class="band band--{band} {cls}"{anchor}>
   <div class="wrap">
     <div class="sec-head" data-reveal>
       <div class="sec-head__text">
@@ -537,7 +540,7 @@ def work_grid(items, heading="Selected work", eyebrow="Evidence", band="quiet",
       </div>
       {more}
     </div>
-    <div class="grid grid--3 work">{''.join(tiles)}</div>
+    <div class="grid grid--3 work{rail}">{''.join(tiles)}</div>
   </div>
 </section>
 """
@@ -848,7 +851,7 @@ def build_service(svc):
     s += f"""
 <section class="band">
   <div class="wrap cse">
-    <div class="cse__step" data-reveal="{v}">
+    <div class="cse__step" id="capability" data-chapter="Capability" data-reveal="{v}">
       <div class="cse__label">
         <span class="cse__n">01 &mdash; Capability</span>
         <span class="cse__name">What this<br>service is</span>
@@ -862,7 +865,7 @@ def build_service(svc):
       </div>
     </div>
 
-    <div class="cse__step" data-reveal="{v}" style="--i:1">
+    <div class="cse__step" id="scenario" data-chapter="Scenario" data-reveal="{v}" style="--i:1">
       <div class="cse__label">
         <span class="cse__n">02 &mdash; Scenario</span>
         <span class="cse__name">Where it<br>fits</span>
@@ -896,13 +899,13 @@ def build_service(svc):
     # ---- 03 evidence -----------------------------------------------------------------
     svc_work = WORK_BY_SERVICE.get(svc["slug"], [])
     if svc_work:
-        s += work_grid(svc_work[:6], heading=f"Work for {svc['name']}",
+        s += work_grid(svc_work[:6], heading=f"Work for {svc['name']}", cls="band-evidence",
                        eyebrow="03 &mdash; Evidence", band="quiet", link=True,
                        intro="Real projects, with the client name attached. Each tile opens the "
                              "project template; results appear there only once they are verified.")
     else:
         s += f"""
-<section class="band band--quiet">
+<section class="band band--quiet" id="evidence" data-chapter="Evidence">
   <div class="wrap">
     <div class="sec-head" data-reveal>
       <div class="sec-head__text">
@@ -1151,7 +1154,7 @@ def build_portfolio():
                    "has not been verified, the page says so instead of estimating one.",
                    eyebrow="Portfolio", chips=["22 documented projects", "16 clients"])
     s += work_grid(WORK, heading="All 22 projects", eyebrow="Brand, print, web and stand",
-                   band="", link=False,
+                   band="", link=False, cls="work--stagger",
                    intro="Every tile is a real artefact with the client name attached. Open one to "
                          "see the challenge, approach and result structure the case studies follow.")
     s += """

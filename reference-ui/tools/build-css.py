@@ -11,7 +11,7 @@ the previous record but are no longer part of either bundle.
 import os
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "assets", "css")
-SITE = ["tokens.css", "v10.css"]
+SITE = ["tokens.css", "v10.css", "v10-creative.css"]
 HOME = ["v10-home.css", "v10-hero3d.css"]
 BANNER = "/* Pixerio bundle - generated from assets/css/src/*.css. Edit the sources. */\n\n"
 
