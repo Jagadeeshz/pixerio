@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Pixerio reference UI — build v1.2
-Generated against 'Pixerio Website Redesign Master Strategy v1.2' (2 November 2026).
+Pixerio reference UI — build v10
+
+Design direction: UI structure from Design Pickle (dark statement band, oversized
+claim, paired pill controls, bleeding media rail, two-up panels, dotted threads),
+storytelling from ServiceNow (capability → scenario → evidence), and colour, type,
+radius and logo from the Pixerio guidelines in README §2.
 
 Section map:
   §1.2  six services, split by service in the navigation, outcome-led
@@ -12,10 +16,14 @@ Section map:
   §3.3  URLs stay put — filenames mirror the live paths
   §3.5  WebP with fallbacks, preloaded Inter, eager hero
   §4.8  one action, repeated: "Discuss Your Project", plus six service variants
+
+Output: 17 pages, styled by assets/css/site.css (+ home.css on index), built from
+assets/css/src by tools/build-css.py. After editing, run:
+    python tools/build-css.py && python build_site.py && python px_apply.py
 """
 import pathlib
 
-ROOT = pathlib.Path(r"C:/Users/Jagadeesh/Desktop/Pixerio Redesign/reference-ui")
+ROOT = pathlib.Path(__file__).parent
 
 ARROW = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true">'
          '<path d="M7 17 17 7M9 7h8v8" stroke-linecap="round" stroke-linejoin="round"/></svg>')
@@ -305,7 +313,8 @@ def head(title, desc, page, ld="", body_class="", hero=False, disc=""):
             f"https://pixerio.com/{page.replace('.html', '/')}"
     preload = ('<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" '
                'type="font/woff2" crossorigin>')
-    hero_css = '<link rel="stylesheet" href="assets/css/hero-belt.css">' if hero else ''
+    home_css = '<link rel="stylesheet" href="assets/css/home.css">' if hero else ''
+    disc_attr = f' data-disc="{disc}"' if disc else ''
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -314,21 +323,24 @@ def head(title, desc, page, ld="", body_class="", hero=False, disc=""):
 <title>{title} — Pixerio</title>
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canon}">
+<meta name="theme-color" content="#12324A">
 <meta property="og:title" content="{title} — Pixerio">
 <meta property="og:description" content="{desc}">
 <meta property="og:type" content="website">
 <meta property="og:url" content="{canon}">
 <meta property="og:image" content="https://pixerio.com/assets/img/pixerio-logo.png">
+<meta property="og:site_name" content="Pixerio">
 <meta name="twitter:card" content="summary_large_image">
 {preload}
 <link rel="icon" href="assets/img/pixerio-logo.png">
-<link rel="stylesheet" href="assets/css/system.css">
-{hero_css}
+<link rel="stylesheet" href="assets/css/site.css">
+{home_css}
 {ld}
-</head>
 <script>document.documentElement.classList.add('js')</script>
-<body data-page="{page}" class="{body_class}"{f' data-disc="{disc}"' if disc else ''}>
+</head>
+<body data-page="{page}" class="{body_class}"{disc_attr}>
 <a class="skip" href="#main">Skip to content</a>
+<div class="progress" aria-hidden="true"></div>
 """
 
 
@@ -347,7 +359,7 @@ def header(active=""):
     </a>
     <nav class="nav" id="nav" aria-label="Primary">
       <div class="has-menu">
-        <button class="nav__parent" aria-expanded="false" aria-controls="services-menu">
+        <button class="nav__parent" type="button" aria-expanded="false" aria-controls="services-menu">
           Services <span aria-hidden="true" class="chev"></span>
         </button>
         <div class="menu" id="services-menu">
@@ -360,7 +372,7 @@ def header(active=""):
       <span class="motion-toggle__ic" aria-hidden="true"></span>
       <span class="motion-toggle__label">Pause motion</span>
     </button>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="nav" aria-label="Menu"><span></span></button>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu"><span></span></button>
   </div>
 </header>
 """
@@ -370,11 +382,12 @@ def cta_band(title="Tell us the problem. We will tell you what it takes.",
              sub="One action, repeated: a short form that names the service you need.",
              action="Discuss Your Project", href="contact-us.html"):
     return f"""
-<section class="section cta-band">
-  <div class="wrap cta-band__inner">
+<section class="cta">
+  <div class="wrap cta__inner">
     <div data-reveal>
-      <h2 data-split>{title}</h2>
-      <p class="lead" style="color:rgba(255,255,255,.78);margin-top:1rem">{sub}</p>
+      <p class="eyebrow">One action</p>
+      <h2>{title}</h2>
+      <p>{sub}</p>
     </div>
     <a class="btn" href="{href}" data-magnetic="0.28">
       <span class="btn__label">{action}</span>
@@ -390,11 +403,12 @@ def footer():
 </main>
 <footer class="footer">
   <div class="wrap">
-    <div class="footer__grid">
-      <div>
+    <p class="footer__word" aria-hidden="true">Pixerio</p>
+    <div class="footer__top">
+      <div class="footer__brand">
         <img src="assets/img/pixerio-logo.png" alt="Pixerio" width="1026" height="381" loading="lazy">
-        <p style="max-width:36ch;font-size:.9rem">Creative and digital services in JC Nagar, Bengaluru.
-        Six services, each with its own buyer, under one partner.</p>
+        <p>Creative and digital services in JC Nagar, Bengaluru. Six services, each with its own
+        buyer, under one partner.</p>
       </div>
       <div>
         <h4>Services</h4>
@@ -407,7 +421,7 @@ def footer():
           <li><a href="pixerio-portfolio.html">Work</a></li>
           <li><a href="blog.html">Insights</a></li>
           <li><a href="contact-us.html">Contact</a></li>
-                  </ul>
+        </ul>
       </div>
       <div>
         <h4>Contact</h4>
@@ -426,15 +440,16 @@ def footer():
     </div>
   </div>
 </footer>
-<script src="assets/js/app.js" defer></script>
-<script src="assets/js/hero-belt.js" defer></script>
-{''}
+<script src="assets/js/px.js" defer></script>
+<script src="assets/js/pagehead.js" defer></script>
+<script src="assets/js/motion.js" defer></script>
 </body>
 </html>
 """
 
 
-def page_head(crumb, h1, sub, eyebrow=None, sub2=None):
+def page_head(crumb, h1, sub, eyebrow=None, sub2=None, chips=None):
+    chip_html = "".join(f'<span class="chip">{c}</span>' for c in (chips or []))
     return f"""
 <main id="main">
 <section class="page-head">
@@ -444,13 +459,16 @@ def page_head(crumb, h1, sub, eyebrow=None, sub2=None):
     {'<p class="eyebrow">' + eyebrow + '</p>' if eyebrow else ''}
     <h1>{h1}</h1>
     <p class="lead">{sub}</p>
-    {('<p>' + sub2 + '</p>') if sub2 else ''}
+    {('<p class="lead" style="margin-top:.9rem">' + sub2 + '</p>') if sub2 else ''}
+    {('<div class="page-head__foot">' + chip_html + '</div>') if chip_html else ''}
   </div>
+  <div class="spectrum" aria-hidden="true"></div>
 </section>
 """
 
 
-def work_grid(items, heading="Selected work"):
+def work_grid(items, heading="Selected work", eyebrow="Evidence", band="quiet",
+              intro=None, link=True, cls=""):
     tiles = []
     for i, w in enumerate(items):
         tiles.append(f"""
@@ -469,35 +487,39 @@ def work_grid(items, heading="Selected work"):
           <span class="tile__arrow" aria-hidden="true">{ARROW}</span>
         </span>
       </a>""")
+    more = (f'<a class="link" href="pixerio-portfolio.html">All 22 projects {ARROW_R}</a>'
+            if link else '')
+    intro_html = f'<p>{intro}</p>' if intro else ''
     return f"""
-<section class="section section--grey">
+<section class="band band--{band} {cls}">
   <div class="wrap">
     <div class="sec-head" data-reveal>
-      <h2>{heading}</h2>
-      <a class="link" href="pixerio-portfolio.html">All work {ARROW_R}</a>
+      <div class="sec-head__text">
+        <p class="eyebrow">{eyebrow}</p>
+        <h2>{heading}</h2>
+        {intro_html}
+      </div>
+      {more}
     </div>
-    <div class="work">{''.join(tiles)}</div>
+    <div class="grid grid--3 work">{''.join(tiles)}</div>
   </div>
 </section>
 """
 
 
 def evidence_pending(service_name):
+    """The evidence-pending panel, unwrapped so callers can place it in any band."""
     return f"""
-<section class="section section--tight">
-  <div class="wrap">
-    <div class="info info--soft" style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
-      <div style="flex:1 1 320px">
-        <div class="info__rule"></div>
-        <h4>Work for {service_name} is being captured</h4>
+    <div class="panel panel--soft" style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1 1 340px">
+        <div class="panel__rule"></div>
+        <h3>Work for {service_name} is being captured</h3>
         <p>This page needs project imagery and one result that can be checked before launch.
         Until those exist, the space stays empty rather than carrying stock photography that
         stands in for work Pixerio has not done.</p>
       </div>
-      <span class="tag" style="flex:none">Evidence pending &middot; client assets</span>
+      <span class="chip chip--blue" style="flex:none">Evidence pending &middot; client assets</span>
     </div>
-  </div>
-</section>
 """
 
 
@@ -509,11 +531,11 @@ def stats_band():
              ("01", "partner from brand definition to launch")]
     cells = "".join(f"""
       <div class="stat">
-        <div class="stat__n">{n}</div>
+        <div class="stat__n num">{n}</div>
         <span>{label}</span>
       </div>""" for n, label in items)
     return f"""
-<section class="section section--tight">
+<section class="band band--tight">
   <div class="wrap">
     <div class="stats" data-reveal="metric">{cells}</div>
   </div>
@@ -557,18 +579,15 @@ def process(heading="Three stages, in this order", intro=None):
         </div>
       </article>""" for n, t, key, d, o in steps)
     return f"""
-<section class="section process">
-  <div class="wrap process__inner">
-    <div class="process__col">
-      <div class="process__sticky" data-reveal>
-        <p class="eyebrow"><span class="sec-num" aria-hidden="true"></span>How we work</p>
-        <h2>{heading}</h2>
-        <p style="margin-top:1rem">Discovery to deployment is a real process here, and it is kept.
-        What changes is that each stage ends in something you can hold.</p>
-        <div class="process__rail" aria-hidden="true"><i></i></div>
-      </div>
+<section class="band band--navy">
+  <div class="wrap process__grid">
+    <div class="process__sticky" data-reveal>
+      <p class="eyebrow">How we work</p>
+      <h2>{heading}</h2>
+      <p class="lead" style="margin-top:1rem">Discovery to deployment is a real process here, and it
+      is kept. What changes is that each stage ends in something you can hold.</p>
     </div>
-    <div class="process__col" data-reveal="editorial">{body}</div>
+    <div data-reveal="editorial">{body}</div>
   </div>
 </section>
 """
@@ -584,14 +603,17 @@ def quotes_block():
         </figcaption>
       </figure>""" for i, q in enumerate(QUOTES))
     return f"""
-<section class="section">
+<section class="band band--quiet">
   <div class="wrap">
     <div class="sec-head" data-reveal>
-      <h2>What clients say, and what is still missing</h2>
-      <p>Four quotes from the existing site. A name, a role and written permission are the
-      condition for publishing them, so the name line is marked until each one is cleared.</p>
+      <div class="sec-head__text">
+        <p class="eyebrow">Trust</p>
+        <h2>What clients say, and what is still missing</h2>
+        <p>Four quotes from the existing site. A name, a role and written permission are the
+        condition for publishing them, so the name line is marked until each one is cleared.</p>
+      </div>
     </div>
-    <div class="quotes">{cards}</div>
+    <div class="home-quotes">{cards}</div>
   </div>
 </section>
 """
@@ -601,14 +623,17 @@ def service_cards(active=""):
     cards = []
     for i, s in enumerate(SERVICES):
         cards.append(f"""
-      <a class="card" href="{s['slug']}.html" data-spotlight data-reveal style="--i:{i}">
-        <span class="card__num">{s['num']}</span>
-        <span class="card__chip">{IC[s['icon']]}</span>
-        <h3 class="card__title">{s['name']}</h3>
-        <p class="card__promise">{s['buy']}</p>
-        <span class="card__cta">What this covers {ARROW}</span>
+      <a class="svc-card" href="{s['slug']}.html" data-reveal style="--i:{i}">
+        <span class="svc-card__top">
+          <span class="svc-card__icon">{IC[s['icon']]}</span>
+          <span class="svc-card__num num">{s['num']} / 06</span>
+        </span>
+        <h3 class="svc-card__title">{s['name']}</h3>
+        <p class="svc-card__promise">{s['buy']}</p>
+        <span class="svc-card__foot">What this covers
+          <span class="svc-card__arrow" aria-hidden="true">{ARROW}</span></span>
       </a>""")
-    return f'<div class="bento">{"".join(cards)}</div>'
+    return f'<div class="grid grid--3">{"".join(cards)}</div>'
 
 
 def service_rows(items, start=1):
@@ -617,11 +642,9 @@ def service_rows(items, start=1):
     for i, o in enumerate(items):
         out.append(f"""
       <a class="row" href="{o['slug']}.html" data-reveal="editorial" style="--i:{i}">
-        <span class="row__n">{start + i:02d}</span>
-        <span>
-          <span class="row__t">{o['name']}</span>
-          <span class="row__s">{o['buy']}</span>
-        </span>
+        <span class="row__n num">{start + i:02d}</span>
+        <span class="row__t">{o['name']}</span>
+        <span class="row__s">{o['buy']}</span>
         <span class="row__a" aria-hidden="true">{ARROW}</span>
       </a>""")
     return f'<div class="rows">{"".join(out)}</div>'
@@ -629,58 +652,32 @@ def service_rows(items, start=1):
 
 
 def capability_wall():
-    """Six disciplines as a pinned, scroll-driven sequence.
-
-    One beat per service: the left list lights up row by row, the right stage
-    swaps one card at a time with a curtain reveal, a chip counts 01/06 and a
-    dot rail tracks the position. Without JS, reduced motion, or on a narrow
-    screen, it collapses to the same six cards in a plain grid.
-    """
-    def card(svc, i):
-        return f"""
-          <article class="pcard" data-beat="{i}">
-            <span class="pcard__num">{svc['num']}</span>
-            <span class="pcard__chip">{IC[svc['icon']]}</span>
-            <h3 class="pcard__name">{svc['name']}</h3>
-            <p class="pcard__promise">{svc['buy']}</p>
-            <span class="pcard__vis" aria-hidden="true"><i></i><i></i><i></i></span>
-            <div class="pcard__meta"><span>What this covers</span><b>{svc['num']} / 06</b></div>
-            <span class="pcard__rule" aria-hidden="true"></span>
-            <a class="pcard__hit" href="{svc['slug']}.html"
-               aria-label="{svc['name']} — open the {svc['name']} service page">{ARROW}</a>
-          </article>"""
-
-    rows = "".join(f"""
-            <li data-beat="{i}">
-              <span class="prow__n">{svc['num']}</span>
-              <a class="prow__t" href="{svc['slug']}.html">{svc['name']}</a>
-              <span class="prow__l" aria-hidden="true">{ARROW}</span>
-            </li>""" for i, svc in enumerate(SERVICES))
-
-    cards = "".join(card(svc, i) for i, svc in enumerate(SERVICES))
-    dots = "".join('<li></li>' for _ in SERVICES)
-
+    """Six disciplines as a three-up wall. Each card is a real link to its page,
+    keeps the numeral, the buyer sentence and the outcome, and lifts on hover —
+    the same six links as the rail above it, in a form that survives reduced
+    motion, pause motion and a narrow screen."""
+    cards = "".join(f"""
+      <article class="wall__card" data-reveal style="--i:{i}">
+        <span class="wall__n num">{s['num']} / 06</span>
+        <h3>{s['name']}</h3>
+        <p>{s['buy']}</p>
+        <span class="wall__out">{s['outcome']}</span>
+        <a class="wall__link" href="{s['slug']}.html"
+           aria-label="{s['name']} — open the {s['name']} service page"></a>
+      </article>""" for i, s in enumerate(SERVICES))
     return f"""
-<section class="pinsvc" id="capabilities" data-pinsvc style="--beats:{len(SERVICES)}">
-  <div class="pinsvc__sticky">
-    <div class="wrap pinsvc__grid">
-      <div class="pinsvc__left">
+<section class="band" id="capabilities">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-head__text">
         <p class="eyebrow">What we do</p>
         <h2>Six core capabilities. One business outcome.</h2>
-        <p class="pinsvc__sub">Every engagement is built around what the work produces for your
-        business, not just a list of deliverables.</p>
-        <ol class="pinsvc__list">{rows}
-        </ol>
+        <p>Every engagement is built around what the work produces for your business, not just a
+        list of deliverables.</p>
       </div>
-      <div class="pinsvc__stage">
-        <div class="pinsvc__chip" aria-hidden="true">
-          <b data-chip-n>01</b><i>/ 06</i><span data-chip-name>3D and immersive</span>
-        </div>
-        <div class="pinsvc__cards">{cards}
-        </div>
-        <ol class="pinsvc__dots" aria-hidden="true">{dots}</ol>
-      </div>
+      <a class="link" href="pixerio-portfolio.html">All 22 projects {ARROW_R}</a>
     </div>
+    <div class="wall">{cards}</div>
   </div>
 </section>
 """
@@ -688,87 +685,54 @@ def capability_wall():
 
 # ---------------------------------------------------------------- home (§2.9)
 
-SERVICE_2D = {
-    "01": ("3D and immersive", "https://pin.it/5poBDUipE"),
-    "02": ("Digital platforms", "https://pin.it/oYIMV5hNr"),
-    "03": ("Video and motion", "https://pin.it/2sMib1b8O"),
-    "04": ("Brand and design", "https://pin.it/58pPfuUMy"),
-    "05": ("Learning", "https://pin.it/3kh7OHKsU"),
-    "06": ("Search and marketing", "https://pin.it/1JA3jzS3d"),
-}
 
+def hero_band():
+    """Homepage statement band: eyebrow, the oversized claim, paired controls,
+    then the six services as a rail that bleeds off both edges.
 
-def hero_belt():
-    """Homepage hero: copy, then six service cards on a conveyor with a scanner
-    between each card and its 2D service plate."""
-    cards, plate = [], []
-    for i, sv in enumerate(SERVICES):
-        items = sv["covers"][:3]
-        total = len(sv["covers"])
-        lis = "".join("<li>" + c + "</li>" for c in items)
-        cards.append(
-            '<article class="card" data-card data-i="' + str(i) + '" data-total="' + str(total) + '">'
-            '<div class="card__top"></div>'
-            '<header class="card__nav">'
-            '<span class="card__brand"><svg class="card__mark" viewBox="0 0 24 24" aria-hidden="true">'
-            '<path d="M4 20 12 4l8 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>'
-            '<path d="M8.4 14h7.2" stroke="currentColor" stroke-width="2.2"/></svg>Pixerio</span>'
-            '<span class="card__idx">' + sv["num"] + '</span>'
-            '</header>'
-            '<div class="card__body">'
-            '<div class="card__lead"><h2 class="card__title">' + sv["name"] + '</h2>'
-            '<p class="card__buy">' + sv["buy"] + '</p></div>'
-            '<ul class="card__list">' + lis + '</ul>'
-            '</div>'
-            '<footer class="card__foot">'
-            '<span class="card__out">' + sv["outcome"] + '</span>'
-            '<a class="card__link" href="' + sv["slug"] + '.html">What this covers &rarr;</a>'
-            '</footer>'
-            '<span class="card__wm" aria-hidden="true">' + sv["num"] + '</span>'
-            '</article>')
+    Design Pickle's structure (dark band, big type, two pills, real work running
+    past the frame), rendered in the Pixerio palette. The rail duplicates the six
+    cards once for a seamless loop; the repeat is aria-hidden so assistive tech
+    and the tab order only see six links.
+    """
+    card = ('<a class="rail__card" href="{slug}.html">'
+            '<span class="rail__top"><span class="rail__icon">{icon}</span>'
+            '<span class="rail__num num">{num}</span></span>'
+            '<span class="rail__name">{name}</span>'
+            '<span class="rail__buy">{buy}</span>'
+            '<span class="rail__go">What this covers ' + ARROW_R + '</span></a>')
+    cards = "".join(card.format(slug=s["slug"], icon=IC[s["icon"]], num=s["num"],
+                                name=s["name"], buy=s["buy"]) for s in SERVICES)
+    dup = "".join(card.format(slug=s["slug"], icon=IC[s["icon"]], num=s["num"],
+                              name=s["name"], buy=s["buy"])
+                  .replace('<a class="rail__card"', '<a class="rail__card" aria-hidden="true" tabindex="-1"')
+                  for s in SERVICES)
+    return f"""
+<main id="main">
+<section class="hero">
+  <div class="wrap hero__inner">
+    <p class="eyebrow">Six disciplines &middot; one partner</p>
+    <h1><span class="hero__l1">Ideas are everywhere.</span> <span class="hero__l2">We make them matter.</span></h1>
+    <p class="lead">One partner for connected creative, digital and technology solutions &mdash;
+    taking your business from brand definition through to a launched, findable product.</p>
+    <div class="actions">
+      <a class="btn" href="contact-us.html" data-magnetic="0.25">
+        <span class="btn__label">Discuss Your Project</span></a>
+      <a class="btn btn--ghost" href="pixerio-portfolio.html">
+        <span class="btn__label">See the work</span></a>
+    </div>
+    <div class="hero__meta">
+      <span class="chip">JC Nagar, Bengaluru</span>
+      <span class="chip">Six services</span>
+      <span class="chip">22 documented projects</span>
+    </div>
+  </div>
+  <div class="hero__rail rail">
+    <div class="rail__track">{cards}{dup}</div>
+  </div>
+</section>
+"""
 
-        plate.append(
-            '<figure class="service-2d-item" data-2d data-i="' + str(i) + '"'
-            ' data-source="' + SERVICE_2D[sv["num"]][1] + '">'
-            '<img src="assets/img/service-2d/service-' + sv["num"] + '.webp"'
-            ' alt="' + sv["name"] + ' — Pixerio service" width="1324" height="745"'
-            ' decoding="async" loading="eager" fetchpriority="low"></figure>')
-
-    head_html = (
-        '<main id="main">\n'
-        '<section class="hero" data-hero>\n'
-        '  <div class="hero__grid">\n'
-        '    <div class="wrap">\n'
-        '      <div class="hero__left">\n'
-        '        <p class="hero__eyebrow">Six disciplines &middot; one partner</p>\n'
-        '        <h1><span class="hero__l1">Ideas are everywhere.</span>'
-        '<span class="hero__l2">We make them matter.</span></h1>\n'
-        '      </div>\n'
-        '      <div class="hero__right">\n'
-        '        <p class="hero__sub">One partner for connected creative, digital and '
-        'technology solutions &mdash; taking your business from brand definition through '
-        'to a launched, findable product.</p>\n'
-        '        <div class="hero__actions">\n'
-        '          <a class="btn" href="contact-us.html" data-magnetic="0.25">'
-        '<span class="btn__label">Discuss Your Project</span></a>\n'
-        '          <a class="btn btn--ghost" href="pixerio-portfolio.html">See the work</a>\n'
-        '        </div>\n'
-        '      </div>\n'
-        '    </div>\n'
-        '  </div>\n'
-        '  <div class="belt" data-belt>\n'
-        '    <div class="service-2d-layer">' + "".join(plate) + '</div>\n'
-        '    <div class="cards">' + "".join(cards) + '</div>\n'
-        '    <canvas class="fx" data-fx aria-hidden="true"></canvas>\n'
-        '    <div class="scan" aria-hidden="true"><b></b><i></i></div>\n'
-        '    <div class="badge" aria-hidden="true">\n'
-        '      <span class="badge__label">Deliverables</span>\n'
-        '      <span class="badge__pill"><b class="badge__num" data-badge-num>00</b>'
-        '<em class="badge__pct" data-badge-pct>01/06</em></span>\n'
-        '    </div>\n'
-        '  </div>\n'
-        '</section>\n')
-    return head_html
 
 def build_index():
     ld = jsonld("Pixerio", "Creative and digital services company in Bengaluru.", "index.html")
@@ -777,12 +741,14 @@ def build_index():
              "digital platforms, video and motion, 3D and immersive, learning, and search.",
              "index.html", ld=ld, hero=True)
     s += header()
-    s += hero_belt()
+    s += hero_band()
     s += capability_wall()
-
     s += work_grid([w for w in WORK if w["img"] in
                     ("Hitachi-Brochure", "Cornucopia-Website", "Tripath-Vehicle-Branding")],
-                   heading="Selected work")
+                   heading="Work that had to survive contact with the real thing.",
+                   eyebrow="Evidence", band="", cls="home-work",
+                   intro="Three projects from the portfolio. Every one is a real artefact with a "
+                         "client name on it — no mock-ups, no stock.")
     s += stats_band()
     s += process()
     s += quotes_block()
@@ -813,35 +779,79 @@ def build_service(svc):
     others = [x for x in SERVICES if x["slug"] != svc["slug"]][:3]
     others_html = service_rows(others)
     s += page_head(svc["name"], svc["h1"], svc["sub"], eyebrow=f"Service {svc['num']} of 06",
-                   sub2=f"<strong>What you are buying:</strong> {svc['buy']}")
+                   chips=[svc["name"], svc["buy"]])
+
+    # ---- 01 capability · 02 scenario -------------------------------------------------
     s += f"""
-<section class="section">
-  <div class="wrap feature">
-    <div data-reveal="{v}">
-      <p class="eyebrow"><span class="sec-num" aria-hidden="true"></span>What this covers</p>
-      <h2>Scope, in plain terms</h2>
-      <ul class="checklist" style="margin-top:1.4rem">{covers}</ul>
-      <p class="small muted" style="margin-top:1.4rem;max-width:52ch">
-        Scoped per project. Anything outside this list is quoted separately, in writing,
-        before it starts.</p>
+<section class="band">
+  <div class="wrap cse">
+    <div class="cse__step" data-reveal="{v}">
+      <div class="cse__label">
+        <span class="cse__n">01 &mdash; Capability</span>
+        <span class="cse__name">What this<br>service is</span>
+      </div>
+      <div class="cse__body">
+        <p class="cse__claim">{svc['buy']}</p>
+        <p>{svc['sub']}</p>
+        <ul class="checklist" style="margin-top:1.8rem">{covers}</ul>
+        <p class="small muted" style="margin-top:1.4rem;max-width:54ch">Scoped per project.
+        Anything outside this list is quoted separately, in writing, before it starts.</p>
+      </div>
     </div>
-    <div class="info info--soft" data-reveal="{v}" style="--i:1">
-      <div class="info__rule"></div>
-      <h4>What it produces for the business</h4>
-      <p style="margin-top:.5rem;font-size:1.02rem">{svc['outcome']}</p>
-      <hr class="hr" style="margin:1.2rem 0">
-      <h4>How it starts</h4>
-      <p style="margin-top:.4rem">A short call, then a written scope with the decisions that
-      need you in the room. No estimate is published before the scope exists.</p>
+
+    <div class="cse__step" data-reveal="{v}" style="--i:1">
+      <div class="cse__label">
+        <span class="cse__n">02 &mdash; Scenario</span>
+        <span class="cse__name">Where it<br>fits</span>
+      </div>
+      <div class="cse__body">
+        <p class="cse__claim">Three questions decide whether this is the right work.</p>
+        <div class="scenario">
+          <div class="scenario__card">
+            <span class="scenario__k">The situation</span>
+            <h3>{svc['h1']}</h3>
+            <p>{svc['sub']}</p>
+          </div>
+          <div class="scenario__card">
+            <span class="scenario__k">What you are buying</span>
+            <h3>{svc['buy']}</h3>
+            <p>{svc['outcome']}</p>
+          </div>
+          <div class="scenario__card">
+            <span class="scenario__k">How it starts</span>
+            <h3>A short call, then a written scope</h3>
+            <p>A short call, then a written scope with the decisions that need you in the room.
+            No estimate is published before the scope exists.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 """
+
+    # ---- 03 evidence -----------------------------------------------------------------
     svc_work = WORK_BY_SERVICE.get(svc["slug"], [])
     if svc_work:
-        s += work_grid(svc_work[:6], heading=f"{svc['name']} work")
+        s += work_grid(svc_work[:6], heading=f"Work for {svc['name']}",
+                       eyebrow="03 &mdash; Evidence", band="quiet", link=True,
+                       intro="Real projects, with the client name attached. Each tile opens the "
+                             "project template; results appear there only once they are verified.")
     else:
-        s += evidence_pending(svc["name"])
+        s += f"""
+<section class="band band--quiet">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-head__text">
+        <p class="eyebrow">03 &mdash; Evidence</p>
+        <h2>What the work looks like</h2>
+      </div>
+    </div>
+    {evidence_pending(svc['name'])}
+  </div>
+</section>
+"""
+
     faqs = "".join(f"""
       <details>
         <summary>{q}</summary>
@@ -849,13 +859,15 @@ def build_service(svc):
       </details>""" for q, a in svc.get("faqs", []))
     if faqs:
         s += f"""
-<section class="section">
-  <div class="wrap feature" style="align-items:start">
-    <div data-reveal>
-      <p class="eyebrow"><span class="sec-num" aria-hidden="true"></span>Questions we get asked</p>
-      <h2>Straight answers</h2>
-      <p style="margin-top:1rem">The questions buyers ask before they make contact, answered
-      without a sales line in front of them.</p>
+<section class="band">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <div class="sec-head__text">
+        <p class="eyebrow">Questions</p>
+        <h2>Straight answers</h2>
+        <p>The questions buyers ask before they make contact, answered without a sales line in
+        front of them.</p>
+      </div>
     </div>
     <div class="faq" data-reveal="{v}" style="--i:1">{faqs}</div>
   </div>
@@ -863,11 +875,14 @@ def build_service(svc):
 """
     s += process()
     s += f"""
-<section class="section section--grey">
+<section class="band band--quiet">
   <div class="wrap">
     <div class="sec-head" data-reveal>
-      <h2>Other services</h2>
-      <a class="link" href="index.html#main">All six {ARROW_R}</a>
+      <div class="sec-head__text">
+        <p class="eyebrow">The other five</p>
+        <h2>Other services</h2>
+      </div>
+      <a class="link" href="index.html#capabilities">All six {ARROW_R}</a>
     </div>
     {others_html}
   </div>
@@ -892,10 +907,11 @@ def build_contact():
     opts = "".join(f'<option value="{x["slug"]}">{x["name"]}</option>' for x in SERVICES)
     s += page_head("Contact", "Discuss Your Project",
                    "Tell us what the work needs to do, and who it is for. A named person replies "
-                   "within one working day, with two or three pieces of relevant work.")
+                   "within one working day, with two or three pieces of relevant work.",
+                   eyebrow="Contact", chips=["Reply within one working day", "JC Nagar, Bengaluru"])
     s += f"""
-<section class="section">
-  <div class="wrap feature" style="align-items:start">
+<section class="band">
+  <div class="wrap split" style="align-items:start">
     <div>
       <form class="form" data-demo action="thank-you.html" method="get">
         <div class="form__row">
@@ -934,19 +950,19 @@ def build_contact():
       <p class="small muted" style="margin-top:1.2rem;max-width:58ch">Prototype form &mdash; it does
       not send. The production build posts to the CMS and shows the thank-you page.</p>
     </div>
-    <div>
-      <div class="info" style="margin-bottom:1.2rem">
-        <div class="info__rule"></div>
-        <h4>What happens after you press send</h4>
-        <ul class="checklist" style="margin-top:.9rem">
+    <div class="grid" style="gap:18px">
+      <div class="panel panel--soft">
+        <div class="panel__rule"></div>
+        <h3>What happens after you press send</h3>
+        <ul class="checklist" style="margin-top:1rem">
           <li>{CHECK}<span><strong>Within one working day</strong> &mdash; a reply from a named person, not an autoresponder.</span></li>
           <li>{CHECK}<span><strong>In that reply</strong> &mdash; two or three pieces of relevant work, and the next step we would suggest.</span></li>
           <li>{CHECK}<span><strong>If it isn&rsquo;t a fit</strong> &mdash; an honest no, and a recommendation if we know someone better placed.</span></li>
         </ul>
       </div>
-      <div class="info">
-        <h4>Direct</h4>
-        <p style="margin-top:.5rem"><a href="mailto:info@pixerio.com">info@pixerio.com</a><br>
+      <div class="panel">
+        <h3>Direct</h3>
+        <p style="margin-top:.6rem"><a href="mailto:info@pixerio.com">info@pixerio.com</a><br>
         <a href="tel:+919****1841">+91 99000 71841</a><br>
         JC Nagar, Bengaluru, India</p>
       </div>
@@ -963,18 +979,20 @@ def build_thankyou():
     s += header()
     s += page_head("Thank you", "That reached us.",
                    "A named person will reply within one working day, with two or three pieces of "
-                   "relevant work and the next step we would suggest.")
+                   "relevant work and the next step we would suggest.",
+                   eyebrow="Enquiry received", chips=["Reply within one working day"])
     s += """
-<section class="section">
-  <div class="wrap narrow">
-    <div class="info info--soft">
-      <div class="info__rule"></div>
-      <h4>While you wait</h4>
+<section class="band">
+  <div class="wrap narrow prose">
+    <div class="panel panel--soft">
+      <div class="panel__rule"></div>
+      <h3>While you wait</h3>
       <p style="margin-top:.6rem">The work is the fastest way to judge whether we are the right
       partner. <a href="pixerio-portfolio.html">Read the project breakdowns</a>, or check the
       <a href="blog.html">insights</a> for how we approach the problem you described.</p>
     </div>
-    <p style="margin-top:2rem"><a class="btn btn--ghost" href="index.html">Back to the site</a></p>
+    <p style="margin-top:2rem"><a class="btn btn--ghost" href="index.html">
+      <span class="btn__label">Back to the site</span></a></p>
   </div>
 </section>
 """
@@ -996,8 +1014,8 @@ def build_about():
                    "The range of work is real: identity, print, packaging, exhibition stands, "
                    "websites, film, 3D and e-learning.")
     s += f"""
-<section class="section">
-  <div class="wrap feature">
+<section class="band">
+  <div class="wrap split">
     <div data-reveal>
       <p class="eyebrow">The position</p>
       <h2>Six services read as six vendors unless one partner connects them.</h2>
@@ -1007,16 +1025,16 @@ def build_about():
       <p>What connects them is the route from brand definition through to a launched, findable
       product &mdash; the same team, the same standards, one conversation.</p>
     </div>
-    <div class="feature__media" data-reveal style="--i:1">
+    <figure class="media" data-reveal style="--i:1">
       <picture>
         <source srcset="assets/img/Creative-Design-Agency.webp" type="image/webp">
         <img src="assets/img/Creative-Design-Agency.png" alt="Pixerio studio" width="565" height="491" loading="lazy">
       </picture>
-    </div>
+    </figure>
   </div>
 </section>
 
-<section class="section section--grey">
+<section class="band band--quiet">
   <div class="wrap">
     <div class="sec-head" data-reveal>
       <h2>What we do, and who it is for</h2>
@@ -1030,14 +1048,14 @@ def build_about():
   </div>
 </section>
 
-<section class="section">
+<section class="band">
   <div class="wrap">
     <div class="sec-head" data-reveal>
       <h2>Capabilities behind the six</h2>
       <p>The working list, carried over from the current site: what the team actually produces.</p>
     </div>
-    <div class="bento" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
-      {''.join(f'<div class="info" data-reveal style="--i:{i}"><div class="info__rule"></div><h4>{c}</h4><p>{d}</p></div>' for i, (c, d) in enumerate([
+    <div class="grid grid--3">
+      {''.join(f'<div class="panel" data-reveal style="--i:{i}"><div class="panel__rule"></div><h4>{c}</h4><p>{d}</p></div>' for i, (c, d) in enumerate([
         ("Branding", "Identity, logo systems, guidelines and the templates that keep them applied."),
         ("Print media design", "Brochures, company profiles, flyers, calendars and packaging."),
         ("Web design and development", "Marketing sites, content structure, responsive build."),
@@ -1067,20 +1085,24 @@ def build_portfolio():
     s += header("work")
     s += page_head("Work", "The work, explained rather than labelled.",
                    "Each project carries a challenge, an approach and a result. Where a result "
-                   "has not been verified, the page says so instead of estimating one.")
-    s += work_grid(WORK, heading="Brand and design")
+                   "has not been verified, the page says so instead of estimating one.",
+                   eyebrow="Portfolio", chips=["22 documented projects", "16 clients"])
+    s += work_grid(WORK, heading="All 22 projects", eyebrow="Brand, print, web and stand",
+                   band="", link=False,
+                   intro="Every tile is a real artefact with the client name attached. Open one to "
+                         "see the challenge, approach and result structure the case studies follow.")
     s += """
-<section class="section">
+<section class="band band--quiet">
   <div class="wrap">
-    <div class="info info--soft" style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">
-      <div style="flex:1 1 320px">
-        <div class="info__rule"></div>
-        <h4>Three services still need imagery</h4>
+    <div class="panel panel--soft" style="display:flex;gap:1.2rem;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1 1 340px">
+        <div class="panel__rule"></div>
+        <h3>Three services still need imagery</h3>
         <p>Video and motion, 3D and immersive, and learning have no project images on the current
         site. Those pages carry an evidence-pending panel instead of stock photography, because
         stock standing in for work is the one thing this build will not do.</p>
       </div>
-      <span class="tag" style="flex:none">3 services pending assets</span>
+      <span class="chip chip--blue" style="flex:none">3 services pending assets</span>
     </div>
   </div>
 </section>
@@ -1103,13 +1125,13 @@ def build_case():
                    "Client name, sector and the business problem in one sentence. The three "
                    "sections below are the structure every case study follows.")
     s += f"""
-<section class="section">
-  <div class="wrap narrow">
+<section class="band">
+  <div class="wrap narrow prose">
     <p class="eyebrow">Challenge</p>
     <h2>The brief, in the client&rsquo;s words</h2>
     <p style="margin-top:1rem">What was wrong before the work started, and what the client
     needed it to do. One or two paragraphs, no adjectives.</p>
-    <figure class="feature__media" style="margin:2rem 0;aspect-ratio:16/9">
+    <figure class="media" style="margin:2rem 0">
       <picture>
         <source srcset="assets/img/work/Lamda-Brochure.webp" type="image/webp">
         <img src="assets/img/work/Lamda-Brochure.jpg" alt="Brochure system" width="650" height="475" loading="lazy">
@@ -1124,9 +1146,9 @@ def build_case():
     <p style="margin-top:1rem">Only verified results are published. A number appears here when
     it has been measured and the client has agreed to it appearing; otherwise this section says
     what was delivered and stops.</p>
-    <div class="info" style="margin-top:1.6rem">
-      <div class="info__rule"></div>
-      <h4>Template note</h4>
+    <div class="panel" style="margin-top:1.6rem">
+      <div class="panel__rule"></div>
+      <h3>Template note</h3>
       <p style="margin-top:.5rem">This is the case-study template. Production copy, imagery and
       any result figures come from the client, and nothing is filled in until they do.</p>
     </div>
@@ -1157,11 +1179,11 @@ def build_blog():
          "The thirty-second version is written, not cut."),
     ]
     cards = "".join(f"""
-      <a class="card" href="article.html" data-spotlight data-reveal style="--i:{i}">
-        <span class="card__num">{p[1]}</span>
-        <h3 class="card__title">{p[0]}</h3>
-        <p class="card__promise">{p[2]}</p>
-        <span class="card__cta">Read {ARROW}</span>
+      <a class="post" href="article.html" data-reveal style="--i:{i}">
+        <span class="post__cat">{p[1]}</span>
+        <h3 class="post__title">{p[0]}</h3>
+        <p class="post__sum">{p[2]}</p>
+        <span class="post__more">Read {ARROW}</span>
       </a>""" for i, p in enumerate(posts))
     s = head("Insights", "Notes on brand, platforms, film, 3D, learning and search.",
              "blog.html", ld=ld)
@@ -1170,9 +1192,9 @@ def build_blog():
                    "Six starting points, one per service. Written for the person who has to "
                    "approve the work, not for a design audience.")
     s += f"""
-<section class="section">
-  <div class="wrap"><div class="bento">{cards}</div>
-    <p class="small muted" style="margin-top:1.6rem;max-width:70ch">Article pages use
+<section class="band">
+  <div class="wrap"><div class="grid grid--3">{cards}</div>
+    <p class="small muted" style="margin-top:2rem;max-width:70ch">Article pages use
     <a href="article.html">one template</a>. Publishing dates, authors and reading times appear
     once the content calendar exists.</p>
   </div>
@@ -1198,17 +1220,17 @@ def build_article():
     s += page_head("Insights / Brand and design", "How to write a brief that gets a useful answer.",
                    "The five things a brief needs before anyone can quote honestly.")
     s += """
-<section class="section">
-  <div class="wrap narrow">
+<section class="band">
+  <div class="wrap narrow prose">
     <p class="eyebrow">Article template</p>
     <h2>Why most briefs produce a price instead of an answer</h2>
     <p style="margin-top:1rem">A brief that names a deliverable gets a quote. A brief that names
     an outcome gets a conversation about the right deliverable. The difference is five sentences.</p>
     <p>The article template carries a heading ladder, one pull quote, one figure with a caption,
     and a closing action. Body copy is written per article; the structure does not change.</p>
-    <div class="info info--soft" style="margin-top:2rem">
-      <div class="info__rule"></div>
-      <h4>Template note</h4>
+    <div class="panel panel--soft" style="margin-top:2rem">
+      <div class="panel__rule"></div>
+      <h3>Template note</h3>
       <p style="margin-top:.5rem">Article body, author, date and reading time come from the
       content calendar. Nothing is back-dated or pre-filled.</p>
     </div>
@@ -1228,8 +1250,8 @@ def build_privacy():
                    "What the enquiry form collects, why, and how long it is kept. Draft for legal "
                    "review before launch.")
     s += """
-<section class="section">
-  <div class="wrap narrow">
+<section class="band">
+  <div class="wrap narrow prose">
     <h2>What is collected</h2>
     <p style="margin-top:.8rem">Name, company, email, telephone, the service selected and the
     brief you write. Nothing else is collected by the form, and no field is hidden.</p>
@@ -1242,9 +1264,9 @@ def build_privacy():
     <h2 style="margin-top:2rem">Retention and your rights</h2>
     <p style="margin-top:.8rem">Retention period, the data controller&rsquo;s registered details
     and the request process are legal copy, and are marked here rather than invented.</p>
-    <div class="info" style="margin-top:2rem">
-      <div class="info__rule"></div>
-      <h4>Before launch</h4>
+    <div class="panel" style="margin-top:2rem">
+      <div class="panel__rule"></div>
+      <h3>Before launch</h3>
       <p style="margin-top:.5rem">Retention period, controller details and the rights process need
       legal sign-off. This page exists so the link is never dead.</p>
     </div>
@@ -1261,8 +1283,8 @@ def build_terms():
     s += page_head("Terms", "Terms of use.",
                    "The basis on which this site is provided. Draft for legal review before launch.")
     s += """
-<section class="section">
-  <div class="wrap narrow">
+<section class="band">
+  <div class="wrap narrow prose">
     <h2>Content</h2>
     <p style="margin-top:.8rem">Work shown on this site belongs to Pixerio or to the client it was
     produced for, and is shown with permission. It may not be reused.</p>
@@ -1272,9 +1294,9 @@ def build_terms():
     <h2 style="margin-top:2rem">Liability and jurisdiction</h2>
     <p style="margin-top:.8rem">Standard clauses, governing law and the registered entity details
     are legal copy and are marked here rather than drafted without instruction.</p>
-    <div class="info" style="margin-top:2rem">
-      <div class="info__rule"></div>
-      <h4>Before launch</h4>
+    <div class="panel" style="margin-top:2rem">
+      <div class="panel__rule"></div>
+      <h3>Before launch</h3>
       <p style="margin-top:.5rem">Governing law, liability cap and entity details need legal
       sign-off.</p>
     </div>
@@ -1296,11 +1318,11 @@ def build_arvr():
                    "This page keeps its existing URL. In the new structure the work sits under "
                    "3D and immersive, so the buyer reads one offer instead of two.")
     s += f"""
-<section class="section">
-  <div class="wrap narrow">
-    <div class="info info--soft">
-      <div class="info__rule"></div>
-      <h4>This URL is preserved, not retired</h4>
+<section class="band">
+  <div class="wrap narrow prose">
+    <div class="panel panel--soft">
+      <div class="panel__rule"></div>
+      <h3>This URL is preserved, not retired</h3>
       <p style="margin-top:.6rem">The ranking history behind this page is kept, and the page
       points at the fuller service description rather than duplicating it.</p>
       <p style="margin-top:1rem"><a class="link" href="3d-visualization.html">

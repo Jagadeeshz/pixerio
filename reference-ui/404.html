@@ -14,7 +14,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/img/pixerio-logo.png">
-<link rel="stylesheet" href="assets/css/site.css?v=20261117z">
+<link rel="stylesheet" href="assets/css/site.css">
 </head>
 <script>document.documentElement.classList.add('js')</script>
 <body data-page="terms.html" class="">
@@ -36,20 +36,22 @@
     <nav class="nav" id="nav" aria-label="Primary">
       <div class="has-menu">
         <button class="nav__parent" type="button" aria-expanded="false" aria-controls="services-menu">
-          Services <span class="chev" aria-hidden="true"></span>
+          Services <span aria-hidden="true" class="chev"></span>
         </button>
-        <div class="menu" id="services-menu"><div class="menu__inner"><a href="3d-visualization.html"><span>3D and immersive</span><small>Show a space or product before it exists.</small></a><a href="web-development.html"><span>Digital platforms</span><small>A digital tool that does a job, not a brochure.</small></a><a href="multimedia-services.html"><span>Video and motion</span><small>Explain the complicated part in 30 seconds.</small></a><a href="graphic-design.html"><span>Brand and design</span><small>One identity, everywhere it appears.</small></a><a href="e-learning.html"><span>Learning</span><small>Training that scales without losing quality.</small></a><a href="digital-marketing-company.html"><span>Search and marketing</span><small>Be found by people already looking.</small></a></div></div>
+        <div class="menu" id="services-menu">
+          <div class="menu__inner"><a href="3d-visualization.html"><span>3D and immersive</span><small>A space or a product shown before it exists.</small></a><a href="web-development.html"><span>Digital platforms</span><small>A digital tool that does a job, not a brochure.</small></a><a href="multimedia-services.html"><span>Video and motion</span><small>A complicated offer that makes sense in thirty seconds.</small></a><a href="graphic-design.html"><span>Brand and design</span><small>A brand that looks the same everywhere it appears.</small></a><a href="e-learning.html"><span>Learning</span><small>Training that scales without losing quality.</small></a><a href="digital-marketing-company.html"><span>Search and marketing</span><small>Being found by people who are already looking.</small></a></div>
+        </div>
       </div>
       <a href="pixerio-portfolio.html">Work</a><a href="blog.html">Insights</a><a href="about-us.html">About</a><a href="contact-us.html">Contact</a>
     </nav>
-    <a class="header-cta" href="contact-us.html">Discuss a project</a>
-    <button class="motion-toggle" type="button" aria-pressed="false">
+    <button class="motion-toggle" type="button" aria-pressed="false" aria-label="Pause motion — freeze animation on this page">
       <span class="motion-toggle__ic" aria-hidden="true"></span>
       <span class="motion-toggle__label">Pause motion</span>
     </button>
     <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav" aria-label="Menu"><span></span></button>
   </div>
 </header>
+
 <!-- /px:header -->
 <main id="main">
 <section class="page-head">
@@ -60,11 +62,10 @@
     <p class="lead">Either it moved or the link was wrong. The six services and the work are one click away.</p>
     <div class="hero__actions" style="margin-top:28px">
       <a class="btn" href="index.html"><span class="btn__label">Go to the homepage</span></a>
-      <a class="btn" href="pixerio-portfolio.html"><span class="btn__label">See the work</span></a>
+      <a class="btn btn--ghost" href="pixerio-portfolio.html"><span class="btn__label">See the work</span></a>
     </div>
   </div>
 </section>
-<section class="stripe-band" aria-hidden="true"><div class="stripe-band__pill"><p>Either it moved or the link was wrong.</p></div></section>
 
 <div class="spectrum" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
 <section data-atm="facet" class="section">
@@ -121,10 +122,8 @@
     </div>
   </div>
 </footer>
-<script src="assets/js/px.js?v=20261117z" defer></script>
-<script src="assets/js/pagehead.js?v=20261117z" defer></script>
-<script src="assets/js/site-motion.js?v=20261117z" defer></script>
-<script src="assets/js/motion.js?v=20261117z" defer></script>
-<script src="assets/js/hero-bg.js?v=20261117z" defer></script>
+<script src="assets/js/px.js" defer></script>
+<script src="assets/js/pagehead.js" defer></script>
+<script src="assets/js/motion.js" defer></script>
 </body>
 </html>

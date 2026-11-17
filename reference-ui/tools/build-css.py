@@ -1,9 +1,18 @@
-"""Rebuild the two CSS bundles from assets/css/src.  python tools/build-css.py"""
+"""Rebuild the two CSS bundles from assets/css/src.  python tools/build-css.py
+
+v10 composition:
+  site.css  tokens.css (brand hues, focus, selection) + v10.css (the design system)
+  home.css  v10-home.css (statement hero, six-service rail, home-only blocks)
+
+The v9 sources (px.css, pagehead.css, site-motion.css, service.css, editorial.css,
+backgrounds.css, hero7.css, home-motion.css, sequence.css, spine.css) stay on disk as
+the previous record but are no longer part of either bundle.
+"""
 import os
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "assets", "css")
-SITE = ["px.css", "tokens.css", "pagehead.css", "site-motion.css", "service.css", "editorial.css", "backgrounds.css"]
-HOME = ["hero7.css", "home-motion.css", "sequence.css", "spine.css"]
+SITE = ["tokens.css", "v10.css"]
+HOME = ["v10-home.css"]
 BANNER = "/* Pixerio bundle - generated from assets/css/src/*.css. Edit the sources. */\n\n"
 
 

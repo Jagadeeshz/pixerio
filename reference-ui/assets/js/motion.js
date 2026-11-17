@@ -135,3 +135,54 @@
     parallax();
   });
 })();
+
+
+/* ---------------------------------------------------------------- FAQ grow
+   <details> stays the control (keyboard, find-in-page and no-JS all keep
+   working); the answer is moved into a box whose height can be animated, so
+   it opens on the same curve as everything else instead of snapping. */
+(function () {
+  'use strict';
+  var root = document.documentElement,
+      reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reduce.matches) return;
+  var paused = function () { return root.getAttribute('data-motion') === 'paused'; };
+
+  [].slice.call(document.querySelectorAll('.faq details')).forEach(function (d) {
+    if (d.dataset.grow === 'yes') return;
+    var body = document.createElement('div');
+    body.className = 'faq__body';
+    while (d.lastElementChild && d.lastElementChild.tagName !== 'SUMMARY') {
+      body.insertBefore(d.lastElementChild, body.firstChild);
+    }
+    if (!body.firstChild) return;
+    d.appendChild(body);
+    d.dataset.grow = 'yes';
+
+    var sum = d.querySelector('summary');
+    if (!sum) return;
+    sum.addEventListener('click', function (e) {
+      if (paused()) return;                 /* the toggle wins: native open/close */
+      e.preventDefault();
+      if (d.dataset.anim === 'yes') return;
+      d.dataset.anim = 'yes';
+      var target = body.scrollHeight;
+      if (d.open) {
+        body.style.height = target + 'px';
+        body.offsetHeight;
+        body.style.height = '0px';
+        window.setTimeout(function () {
+          d.open = false; d.dataset.anim = 'no'; body.style.height = '';
+        }, 420);
+      } else {
+        d.open = true;
+        body.style.height = '0px';
+        body.offsetHeight;
+        body.style.height = target + 'px';
+        window.setTimeout(function () {
+          d.dataset.anim = 'no'; body.style.height = 'auto';
+        }, 420);
+      }
+    });
+  });
+})();

@@ -77,6 +77,64 @@ permissions for the four quotes, and project imagery for 3D, video and learning.
 
 ---
 
+## 0d. v10 — the design-system pass (17 pages)
+
+Brief: redesign every page. UI structure from **Design Pickle**, storytelling from
+**ServiceNow** (capability → scenario → evidence), colour, type, radius and logo from the
+Pixerio guidelines in §2 of this document.
+
+**What changed, in one line each.**
+
+| Layer | Before | v10 |
+|---|---|---|
+| Generator | `build_site.py` pointed at a different folder; running it would have wiped the v9 markup | `ROOT` is the script's own folder; one template, 17 pages, runnable |
+| CSS | nine v9 sources bundled into site.css | `src/tokens.css` + `src/v10.css` (site) and `src/v10-home.css` (home), built by `tools/build-css.py` |
+| Chrome | px_apply injected px.css and a second header | px_apply imports the header from `build_site` (one copy of the nav) and only ensures assets |
+| Bands | dark hero + dark page heads | brand-light statement bands: white paper, top-right brand light, navy type, blue emphasis, green only as a mark |
+| Service pages | scope + work + FAQ stacked | **01 Capability → 02 Scenario → 03 Evidence** → FAQ → process → other services → CTA |
+| Cards | four competing card families | one system: `.svc-card`, `.tile`, `.post`, `.quote`, `.panel`, `.wall__card` |
+| Home hero | conveyor belt + canvas dissolve | statement band + six-service rail that bleeds off both edges |
+
+**Storytelling, and where the words come from.** The capability block is the existing scope
+list and outcome sentence. The scenario block re-composes three sentences already on the page
+(the situation = the page's own H1 and sub, what you are buying = the buyer sentence and
+outcome, how it starts = the existing scope-first paragraph) into three cards. The evidence
+block is the real work grid, or the evidence-pending panel where a service has no imagery yet.
+**No testimonial, result, image or legal sentence was invented**, and no price appears anywhere.
+
+**Exclusions honoured.** No pricing page, no price table, no billing component, no "Pricing"
+entry in the navigation or footer.
+
+**Component inventory** (`assets/css/src/v10.css`): `.band` (5 tones), `.wrap`, `.split`,
+`.grid--2/3/4`, `.sec-head`, `.svc-card`, `.tile`, `.post`, `.quote`, `.panel`, `.chip`,
+`.btn` (3 variants), `.stats`, `.step`, `.favicon`-safe `.faq`, `.form`/`.field`, `.prose`,
+`.checklist`, `.cms`-free `.cse__step`, `.scenario`, `.evidence`, `.rows`/`.row`, `.media`,
+`.cta`, `.footer`, plus the home-only `.hero`, `.rail__card`, `.wall__card`.
+
+**Motion kept.** Reveals (`[data-reveal]` + `px.js`), heading masks (`pagehead.js`),
+v9's entrance/magnetic/parallax pass (`motion.js`) and the FAQ height tween (appended to
+`motion.js`). The header **Pause motion** control still freezes all of it, and
+`prefers-reduced-motion` removes it. The one interaction deliberately replaced is the home
+hero: the v9 conveyor belt needed `hero-belt.js` and a canvas tied to v9 markup, so it is now
+a CSS rail — same six service links, same hover language, no canvas.
+
+**Build order** (all three are idempotent):
+
+```
+python tools/build-css.py     # tokens + v10 -> site.css ; v10-home -> home.css
+python build_site.py          # 17 pages
+python px_apply.py            # chrome pass; second run reports 0 changes
+```
+
+`reference-ui/404.html` is outside the generator and is maintained by hand against the same
+three scripts.
+
+**Verified on the built pages** — 18 documents (17 + 404): one `<h1>` each, no image without
+`alt`, no empty `href`, 0 console errors, 0 HTTP >= 400, no horizontal overflow at 390 or
+1440, header 77px, `site.css` (+ `home.css` on the homepage) only.
+
+---
+
 ## 1. What is in the build
 
 | # | Page | Live path it mirrors | Section |
