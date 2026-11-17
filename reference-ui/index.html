@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="pt">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,8 +15,8 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="assets/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="assets/img/pixerio-logo.png">
-<link rel="stylesheet" href="assets/css/px.css">
-<link rel="stylesheet" href="assets/css/motion.css">
+<link rel="stylesheet" href="assets/css/site.css?v=20261117z">
+<link rel="stylesheet" href="assets/css/home.css?v=20261117z">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Organization","LocalBusiness"],"@id":"https://pixerio.com/#organization","name":"Pixerio","url":"https://pixerio.com/","logo":"https://pixerio.com/assets/img/pixerio-logo.png","image":"https://pixerio.com/assets/img/pixerio-logo.png","description":"Creative and digital services company in Bengaluru: brand and design, digital platforms, video and motion, 3D and immersive, learning, search and marketing.","email":"info@pixerio.com","telephone":"+91-99000-71841","address":{"@type":"PostalAddress","streetAddress":"JC Nagar","addressLocality":"Bengaluru","addressRegion":"Karnataka","addressCountry":"IN"},"areaServed":"IN","sameAs":["https://360video.pixerio.com/Pixerio-360-room/"]}]}</script>
 </head>
 <body data-page="index.html">
@@ -62,45 +62,124 @@
 
 <main id="main">
 
-  <!-- HERO -->
-  <section class="wrap page-head" style="border-bottom:0">
-    <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Creative and digital services</span></div>
-    <h1 data-split>Ideas are everywhere.<br>We make them <em>matter</em>.</h1>
-    <p class="lead">Six services, each with its own buyer, under one partner in Bengaluru. We design it, build it, and stay until it works where it gets used.</p>
-    <div class="hero__actions" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:32px">
-      <a class="btn" href="contact-us.html"><span class="btn__label">Discuss your project</span></a>
-      <a class="btn btn--ghost" href="#work"><span class="btn__label">See the work</span></a>
+<!-- HERO -->
+  <section class="hx" aria-label="Pixerio — creative and digital services">
+    <div class="hx__scene" aria-hidden="true">
+      <canvas class="hero-bg" id="hero-bg" aria-hidden="true"></canvas>
+      <div class="hx__point"></div>
+      <div class="hx__world" data-world>
+        <figure class="pnl" data-pnl><figcaption><b>01</b><span>3D and immersive</span></figcaption></figure>
+        <figure class="pnl" data-pnl><figcaption><b>02</b><span>Digital platforms</span></figcaption></figure>
+        <figure class="pnl" data-pnl><figcaption><b>03</b><span>Video and motion</span></figcaption></figure>
+        <figure class="pnl" data-pnl><figcaption><b>04</b><span>Brand and design</span></figcaption></figure>
+        <figure class="pnl" data-pnl><figcaption><b>05</b><span>Learning</span></figcaption></figure>
+        <figure class="pnl" data-pnl><figcaption><b>06</b><span>Search and marketing</span></figcaption></figure>
+      </div>
     </div>
 
-    <div class="feature" style="margin-top:clamp(36px,6vw,72px)" data-reveal>
-      <div class="deck" data-deck role="group" aria-label="Selected Pixerio work">
-        <figure class="deck__card" data-pos="center">
-          <picture>
-            <source srcset="assets/img/work/Lamda-Components-Stall-Design.webp" type="image/webp">
-            <img src="assets/img/work/Lamda-Components-Stall-Design.jpg" alt="Lamda Components exhibition stand designed by Pixerio" width="800" height="600" fetchpriority="high">
-          </picture>
-        </figure>
-        <figure class="deck__card" data-pos="left">
-          <picture>
-            <source srcset="assets/img/work/Cornucopia-Website.webp" type="image/webp">
-            <img src="assets/img/work/Cornucopia-Website.jpg" alt="Cornucopia corporate website built by Pixerio" width="800" height="600" loading="lazy">
-          </picture>
-        </figure>
-        <figure class="deck__card" data-pos="right">
-          <picture>
-            <source srcset="assets/img/work/Hitachi-Brochure.webp" type="image/webp">
-            <img src="assets/img/work/Hitachi-Brochure.jpg" alt="Hitachi corporate brochure designed by Pixerio" width="800" height="600" loading="lazy">
-          </picture>
-        </figure>
+    <div class="hx__wrap">
+      <span class="hx__chip">Creative and digital services &middot; Bengaluru</span>
+      <h1>
+        <span class="hx__l"><span>Ideas are everywhere.</span></span>
+        <span class="hx__l"><span>We make them <em>matter</em>.</span></span>
+      </h1>
+      <p class="hx__lead">Six services, each with its own buyer, under one partner in Bengaluru. We design it, build it, and stay until it works where it gets used.</p>
+      <div class="hx__acts">
+        <a class="btn" href="contact-us.html"><span class="btn__label">Discuss your project</span></a>
+        <a class="btn btn--ghost" href="#work"><span class="btn__label">See the work</span></a>
       </div>
-      <div>
-        <p class="eyebrow">In the portfolio</p>
-        <div class="bento" style="grid-template-columns:1fr 1fr">
-          <div class="info"><div class="info__rule"></div><h3>22 documented projects</h3><p>Brand, print, packaging, web, and exhibition work — all visible in the portfolio.</p></div>
-          <div class="info info--soft"><div class="info__rule"></div><h3>03 stages</h3><p>Discovery, implementation, deployment. Each ends in something you can hold.</p></div>
-          <div class="info info--soft"><div class="info__rule"></div><h3>01 partner</h3><p>The same team from the first workshop to the last file.</p></div>
-          <div class="info"><div class="info__rule"></div><h3>Bengaluru</h3><p>JC Nagar, Mahalakshmi Layout — working across India.</p></div>
+      <ul class="hx__rail">
+          <li><a href="3d-visualization.html">3D and immersive</a></li>
+          <li><a href="web-development.html">Digital platforms</a></li>
+          <li><a href="multimedia-services.html">Video and motion</a></li>
+          <li><a href="graphic-design.html">Brand and design</a></li>
+          <li><a href="e-learning.html">Learning</a></li>
+          <li><a href="digital-marketing-company.html">Search and marketing</a></li>
+      </ul>
+    </div>
+  </section>
+
+    <div class="mq" aria-label="The six services">
+    <div class="mq__track">
+      <div class="mq__group"><a class="mq__item" href="3d-visualization.html">3D and immersive</a><a class="mq__item" href="web-development.html">Digital platforms</a><a class="mq__item" href="multimedia-services.html">Video and motion</a><a class="mq__item" href="graphic-design.html">Brand and design</a><a class="mq__item" href="e-learning.html">Learning</a><a class="mq__item" href="digital-marketing-company.html">Search and marketing</a></div>
+    </div>
+  </div>
+
+  <section class="kin" aria-hidden="true">
+    <div class="kin__row kin__row--a"><span class="kin__w">Brand and design</span><span class="kin__w">Digital platforms</span><span class="kin__w">Video and motion</span><span class="kin__w">3D and immersive</span><span class="kin__w">Learning</span><span class="kin__w">Search and marketing</span></div>
+    <div class="kin__row kin__row--b"><span class="kin__w">Bengaluru</span><span class="kin__w">Twenty-two projects</span><span class="kin__w">Twelve clients</span><span class="kin__w">One partner</span><span class="kin__w">Six services</span><span class="kin__w">Documented, not described</span></div>
+  </section>
+
+  <section class="section rail" aria-label="Selected work">
+    <div class="wrap">
+      <div class="rail__head">
+        <h2>Selected work</h2>
+        <div class="rail__nav">
+          <button type="button" data-rail-prev aria-label="Previous work">&larr;</button>
+          <button type="button" data-rail-next aria-label="Next work">&rarr;</button>
         </div>
+      </div>
+      <div class="rail__track">
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Snacs-Constructions-Branding.webp" alt="Snacs Constructions — brand by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Snacs Constructions — brand</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/NPS-Agara-School-Website.webp" alt="NPS Agara School — website by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>NPS Agara School — website</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Lamda-Components-Stall-Design.webp" alt="Lamda Components — stand by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Lamda Components — stand</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Social-Media-Creatives.webp" alt="Social creative by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Social creative</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/iQuant-Package-Design.webp" alt="iQuant — packaging by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>iQuant — packaging</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Cornucopia-Website.webp" alt="Cornucopia — website by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Cornucopia — website</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Tripath-Vehicle-Branding.webp" alt="Tripath — vehicle branding by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Tripath — vehicle branding</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Takt-Brochure-Design.webp" alt="Takt — brochure by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Takt — brochure</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Maple-Logo-Design.webp" alt="Maple — identity by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Maple — identity</span>
+          </a>
+        </figure>
+        <figure class="rail__item clip">
+          <a href="pixerio-portfolio.html">
+            <img src="assets/img/work/Sada-Money-Flyer.webp" alt="Sada Money — flyer by Pixerio" width="1600" height="1200" loading="lazy" decoding="async">
+            <span>Sada Money — flyer</span>
+          </a>
+        </figure>
       </div>
     </div>
   </section>
@@ -222,6 +301,66 @@
           </article>
           <div class="seq__rail" aria-hidden="true"><i></i></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sq" data-sq aria-label="The six services, one at a time">
+    <div class="sq__stage">
+      <div class="sq__l">
+        <span class="sq__eyebrow">Six services &middot; one partner</span>
+        <p class="sq__num" data-num-big>01<span class="sq__of">/ 06</span></p>
+        <h2 class="sq__name" data-name>3D and immersive</h2>
+        <p class="sq__promise" data-promise>Walkthroughs, product visuals and AR for things that don’t exist yet.</p>
+        <a class="sq__link" data-link href="3d-visualization.html">Open the service <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="sq__ticks" aria-hidden="true"><i data-tick class="on"></i><i data-tick></i><i data-tick></i><i data-tick></i><i data-tick></i><i data-tick></i></div>
+      </div>
+      <div class="sq__r">
+      <figure class="sq__shot on" data-shot data-n="01" data-title="3D and immersive"
+              data-promise="Walkthroughs, product visuals and AR for things that don’t exist yet." data-href="3d-visualization.html">
+        <picture>
+          <source srcset="assets/img/work/Lamda-Components-Stall-Design.webp" type="image/webp">
+          <img src="assets/img/work/Lamda-Components-Stall-Design.jpg" alt="Lamda Components — exhibition stand by Pixerio" width="1600" height="1200" fetchpriority="high" decoding="async">
+        </picture>
+        <figcaption>Lamda Components — exhibition stand</figcaption>
+      </figure>
+      <figure class="sq__shot" data-shot data-n="02" data-title="Digital platforms"
+              data-promise="Websites, e-commerce and the systems that keep them running." data-href="web-development.html">
+        <picture>
+          <source srcset="assets/img/work/NPS-Agara-School-Website.webp" type="image/webp">
+          <img src="assets/img/work/NPS-Agara-School-Website.jpg" alt="NPS Agara School — website by Pixerio" width="1600" height="1200" loading="eager" decoding="async">
+        </picture>
+        <figcaption>NPS Agara School — website</figcaption>
+      </figure>
+      <figure class="sq__shot" data-shot data-n="03" data-title="Video and motion"
+              data-promise="Films, explainers and motion design for launch and demand." data-href="multimedia-services.html">
+        <picture>
+          <source srcset="assets/img/work/Lakshmi-Videos-Website.webp" type="image/webp">
+          <img src="assets/img/work/Lakshmi-Videos-Website.jpg" alt="Lakshmi Videos by Pixerio" width="1600" height="1200" loading="eager" decoding="async">
+        </picture>
+        <figcaption>Lakshmi Videos</figcaption>
+      </figure>
+      <figure class="sq__shot" data-shot data-n="04" data-title="Brand and design"
+              data-promise="Identity, print and packaging, from first mark to shelf." data-href="graphic-design.html">
+        <picture>
+          <source srcset="assets/img/work/Snacs-Constructions-Branding.webp" type="image/webp">
+          <img src="assets/img/work/Snacs-Constructions-Branding.jpg" alt="Snacs Constructions — brand by Pixerio" width="1600" height="1200" loading="eager" decoding="async">
+        </picture>
+        <figcaption>Snacs Constructions — brand</figcaption>
+      </figure>
+      <figure class="sq__shot" data-shot data-n="05" data-title="Learning"
+              data-promise="Courseware and e-learning for people who have to use it, not just watch it." data-href="e-learning.html">
+        <img src="assets/img/service-2d/service-05.webp" alt="Learning service by Pixerio" width="1324" height="745" loading="lazy" decoding="async">
+        <figcaption>Learning — service overview</figcaption>
+      </figure>
+      <figure class="sq__shot" data-shot data-n="06" data-title="Search and marketing"
+              data-promise="SEO, campaigns and social creative that carry one brand voice." data-href="digital-marketing-company.html">
+        <picture>
+          <source srcset="assets/img/work/Social-Media-Creatives.webp" type="image/webp">
+          <img src="assets/img/work/Social-Media-Creatives.jpg" alt="Social creative by Pixerio" width="1600" height="1200" loading="eager" decoding="async">
+        </picture>
+        <figcaption>Social creative</figcaption>
+      </figure>
       </div>
     </div>
   </section>
@@ -363,7 +502,7 @@
         <p>Creative and digital services in JC Nagar, Bengaluru. Six services, each with its own buyer, under one partner.</p>
       </div>
       <div>
-        <h4>Services</h4>
+        <h3>Services</h3>
         <ul>
           <li><a href="3d-visualization.html">3D and immersive</a></li>
           <li><a href="web-development.html">Digital platforms</a></li>
@@ -374,7 +513,7 @@
         </ul>
       </div>
       <div>
-        <h4>Company</h4>
+        <h3>Company</h3>
         <ul>
           <li><a href="about-us.html">About</a></li>
           <li><a href="pixerio-portfolio.html">Work</a></li>
@@ -385,7 +524,7 @@
         </ul>
       </div>
       <div>
-        <h4>Contact</h4>
+        <h3>Contact</h3>
         <ul>
           <li><a href="mailto:info@pixerio.com">info@pixerio.com</a></li>
           <li><a href="tel:+919900071841">+91 99000 71841</a></li>
@@ -402,7 +541,17 @@
   </div>
 </footer>
 
-<script src="assets/js/px.js" defer></script>
-<script src="assets/js/motion.js" defer></script>
+<script src="assets/js/px.js?v=20261117z" defer></script>
+<script src="assets/js/pagehead.js?v=20261117z" defer></script>
+<script src="assets/js/site-motion.js?v=20261117z" defer></script>
+<script src="assets/js/motion.js?v=20261117z" defer></script>
+<script src="assets/js/hero.js?v=20261117z" defer></script>
+<script src="assets/js/hero-enter.js?v=20261117z" defer></script>
+<script src="assets/js/hero-gl.js?v=20261117z" defer></script>
+<script src="assets/js/hero7.js?v=20261117z" defer></script>
+<script src="assets/js/home-motion.js?v=20261117z" defer></script>
+<script src="assets/js/sequence.js?v=20261117z" defer></script>
+<script src="assets/js/spine.js?v=20261117z" defer></script>
+<script src="assets/js/hero-bg.js?v=20261117z" defer></script>
 </body>
 </html>
