@@ -173,6 +173,41 @@ three scripts.
 
 ---
 
+## 0e. v10.3 / v10.4 — the creative layer and the pinned wall
+
+Two additive passes, both reversible, neither touching page copy.
+
+**v10.3 `assets/css/src/v10-creative.css`** — editorial typography (weight contrast on the
+hero, tighter display tracking, wider micro-labels), a ghost chapter numeral per band drawn
+from a CSS counter with no extra markup, a pointer spotlight on cards via `--mx/--my`, a
+2.8% grain layer, and an editorial cascade on the portfolio grid (offset by margin, never
+transform, so the reveal animation keeps ownership of `transform`).
+
+**v10.4 `assets/css/src/v10-wall.css` + `assets/js/wall-pin.js`** — the home six-service
+wall becomes a pinned scroll sequence on ≥1024px: the band pins for ~3.75 viewports, the
+track travels horizontally, and the card nearest the stage centre comes up to full colour.
+A position readout (`03 …… VIDEO AND MOTION / 06`) sits at the bottom of the stage.
+
+How it degrades:
+
+| condition | result |
+| --- | --- |
+| JS off, or `<1024px` | the wall stays the 3/2/1-column grid from `build_site.py` |
+| `prefers-reduced-motion: reduce` | no pin, no track, progress readout hidden, all cards at full opacity |
+| viewport re-crosses 1024px | `wall-pin.js` maps its listeners and restores the grid |
+
+Content is never duplicated: the six cards, their links and their text stay in the document
+where the generator wrote them; the script only adds a class, a height and a transform.
+
+Two things were built and then removed rather than shipped: a fixed chapter rail on service
+pages (it rendered as three stray hairlines at the page margin) and a horizontal scroll-snap
+portfolio rail (lazy images left a screen of dead space after the first tile).
+
+**`home.css` is loaded after `site.css`.** Anything that must beat a `.wall` or `.hero` rule
+has to live in the home bundle — that is why `v10-wall.css` is bundled into `home.css`, not
+`site.css`. The first version of the pin silently lost to `.wall{display:grid}` for exactly
+this reason.
+
 ## 1. What is in the build
 
 | # | Page | Live path it mirrors | Section |

@@ -1,0 +1,87 @@
+/* ==========================================================================
+   Pixerio — the six-service wall as a pinned sequence (v10.4)
+   --------------------------------------------------------------------------
+   On a wide screen the wall stops being a grid of six equal cards and becomes
+   one horizontal track driven by vertical scroll: the section pins, the cards
+   travel past, and the card at the centre of the stage comes up to full colour
+   while the rest sit back. It is the "signature motion moment" the reference
+   studios all have in the body of the page.
+
+   The class is added by wall-pin.js, so with no JS this is still the grid:
+
+     <section class="band band--pin" style="--pin:640vh">
+       <div class="wrap">
+         <div class="wall wall--track">…six .wall__card…</div>
+       </div>
+     </section>
+
+   Everything below only applies under .band--pin.
+   ========================================================================== */
+
+.band--pin{position:relative}
+
+.band--pin>.wrap{
+  position:sticky;top:0;height:100vh;height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-start;
+  padding-top:calc(var(--v-header) + clamp(10px,2vh,26px));
+  overflow:hidden
+}
+
+/* the head stays in flow: an absolutely placed head collides with the track
+   as soon as a card is taller than its own copy */
+.band--pin .sec-head{
+  position:static;margin:0 0 clamp(14px,2.2vh,30px);
+  align-items:flex-end;flex:0 0 auto
+}
+.band--pin .sec-head h2{font-size:clamp(1.9rem,3.2vw,2.9rem)}
+
+.wall.wall.wall--track{
+  display:flex;flex-wrap:nowrap;align-items:stretch;
+  gap:clamp(16px,2vw,28px);
+  flex:1 1 auto;min-height:0;
+  align-items:stretch;
+  padding-block:0 clamp(58px,8vh,92px);
+  will-change:transform;
+  transition:transform .12s linear
+}
+
+.wall--track>.wall__card{
+  flex:0 0 clamp(280px,25vw,360px);
+  min-height:clamp(300px,38vh,420px);
+  margin:0;
+  opacity:.42;
+  filter:saturate(.55);
+  transition:opacity .55s var(--v-ease),filter .55s var(--v-ease),box-shadow .55s var(--v-ease)
+}
+.wall--track>.wall__card.is-live{
+  opacity:1;
+  filter:none;
+  box-shadow:0 30px 70px -46px rgba(11,42,62,.55)
+}
+.wall--track>.wall__card.is-live .wall__art{transform:translateY(-2px) scale(1.04)}
+.wall--track>.wall__card .wall__art{transition:transform .55s var(--v-ease),background-color .4s}
+
+/* the sequence needs a position readout, or the visitor is lost */
+.band--pin .wall-progress{
+  position:absolute;left:0;right:0;bottom:clamp(14px,3vh,34px);
+  display:flex;align-items:center;gap:clamp(10px,1.4vw,18px);
+  font-size:.68rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--v-muted)
+}
+.band--pin .wall-progress__now{color:var(--v-ink);font-variant-numeric:tabular-nums}
+.band--pin .wall-progress__bar{
+  position:relative;flex:1 1 auto;height:1px;background:rgba(18,50,74,.14)
+}
+.band--pin .wall-progress__bar i{
+  position:absolute;inset:0 auto 0 0;width:0;background:var(--v-teal);
+  transition:width .12s linear
+}
+.band--pin .wall-progress__name{color:var(--v-muted);letter-spacing:.1em}
+
+@media (prefers-reduced-motion:reduce){
+  .band--pin>.wrap{position:static;height:auto;overflow:visible}
+  .wall--track{display:grid;grid-template-columns:repeat(3,1fr);transform:none!important;
+    padding-block:0;transition:none}
+  .wall--track>.wall__card{opacity:1;filter:none}
+  .band--pin .wall-progress{display:none}
+}

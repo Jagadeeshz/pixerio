@@ -819,7 +819,8 @@ def build_index():
     s += process()
     s += quotes_block()
     s += cta_band()
-    s += footer().replace("</body>", '<script src="assets/js/hero-stage.js" defer></script>' + chr(10) + '</body>', 1)
+    s += footer().replace("</body>", '<script src="assets/js/hero-stage.js" defer></script>' + chr(10) +
+                                        '<script src="assets/js/wall-pin.js" defer></script>' + chr(10) + '</body>', 1)
     return ("index.html", s)
 
 
