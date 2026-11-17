@@ -1,207 +1,137 @@
-/* Pixerio — v3.0 "Motion" interaction layer
-   Motion vocabulary sourced from uxfolio.io and rebuilt here with no
-   dependencies, behind the same guarantees px.js gives:
-     · with JS off every page still renders, reads and navigates
-     · html[data-motion="paused"] (the header toggle) freezes everything
-     · prefers-reduced-motion removes the movement, not the content
-   Each block is independent: if one selector is missing on a page it is a
-   no-op, never an error. */
+/* ==========================================================================
+   Pixerio — motion pass (v3.0)
+   Adds the movement the v1.7 build deliberately withheld: entrance choreography,
+   masked heading reveals beyond the hero, magnetic controls, and a shallow
+   parallax on photography. Everything here is GPU-only (transform/opacity),
+   camera-quiet (max 6px pull, max 14px parallax), and stops dead on the site's
+   "Pause motion" control and under prefers-reduced-motion.
+   The hero surface itself is driven by assets/js/hero-bg.js.
+   ========================================================================== */
 (function () {
   'use strict';
 
-  var root = document.documentElement,
-      reduce = matchMedia('(prefers-reduced-motion: reduce)'),
-      fine = matchMedia('(hover:hover) and (pointer:fine)'),
-      KEY = 'pixerio:motion';
+  var root = document.documentElement;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var fine = window.matchMedia('(hover:hover) and (pointer:fine)');
 
   function paused() {
     return root.getAttribute('data-motion') === 'paused' || reduce.matches;
   }
+  function onReady(fn) {
+    if (document.readyState !== 'loading') fn();
+    else document.addEventListener('DOMContentLoaded', fn);
+  }
 
-  /* ======================================================================
-     1. page transition — fade out on internal navigation, fade in on arrival
-     Only same-folder .html links. External, mail, tel, hash and download
-     links navigate normally.
-     ====================================================================== */
-  root.classList.remove('pt-out'); /* bfcache / back button */
-  addEventListener('pageshow', function () { root.classList.remove('pt-out'); });
+  root.classList.add('js');
 
-  document.addEventListener('click', function (e) {
-    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
-    var a = e.target.closest && e.target.closest('a');
-    if (!a) return;
-    var href = a.getAttribute('href') || '';
-    if (!href || a.target === '_blank' || a.hasAttribute('download')) return;
-    if (/^(#|mailto:|tel:|https?:|\/\/)/i.test(href)) return;
-    if (!/\.html(\?|#|$)/i.test(href)) return;
-    if (paused()) return;
-    e.preventDefault();
-    root.classList.add('pt-out');
-    /* leave on the frame the fade finishes, so the swap is never visible */
-    setTimeout(function () { location.href = href; }, 190);
-  });
+  /* -------- 1. entrance choreography: crumbs, lead, actions rise in order -------- */
+  function entrance() {
+    window.setTimeout(function () { root.classList.add('is-ready'); }, 80);
+  }
 
-  /* ======================================================================
-     2. marker highlight — the uxfolio swash, on the emphasis word of a heading
-     The word is already <em> in the markup (the design's existing "this part
-     matters" signal). No markup is rewritten, so search engines, screen
-     readers and print see exactly the same text.
-     ====================================================================== */
-  var marks = [].slice.call(document.querySelectorAll('.page-head h1 em, h1 em, h2 em'));
-  marks.forEach(function (em) {
-    if (em.querySelector('img,svg')) return;
-    em.classList.add('m-mark');
-  });
-  if (marks.length) {
+  /* -------- 2. masked line reveals for every heading, not just the hero -------- */
+  function revealLines() {
+    var lines = [].slice.call(document.querySelectorAll('.mask-line'));
+    if (!lines.length) return;
     if (!('IntersectionObserver' in window) || reduce.matches) {
-      marks.forEach(function (m) { m.classList.add('in'); });
-    } else {
-      var ioMark = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (!en.isIntersecting) return;
-          /* delay after the line itself has risen, like the source site: the
-             heading lands first, then the marker draws under it */
-          setTimeout(function () { en.target.classList.add('in'); }, 320);
-          ioMark.unobserve(en.target);
-        });
-      }, { threshold: 0.6 });
-      marks.forEach(function (m) { ioMark.observe(m); });
+      lines.forEach(function (l) { l.classList.add('in'); });
+      return;
     }
-  }
-
-  /* ======================================================================
-     3. hero deck — three cards, one shuffle
-     uxfolio animates this in pure CSS with a 3-step keyframe loop. A timer
-     does the same thing here with transitions, which makes it pausable:
-     on hover, on the page's motion toggle, when the deck scrolls away, and
-     when the tab is hidden.
-     ====================================================================== */
-  var deck = document.querySelector('[data-deck]');
-  if (deck) {
-    var cards = [].slice.call(deck.querySelectorAll('.deck__card')),
-        slots = ['center', 'left', 'right'],
-        step = 0,
-        timer = null,
-        visible = true;
-
-    function paint() {
-      cards.forEach(function (c, i) {
-        c.setAttribute('data-pos', slots[(i + step) % 3]);
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var line = en.target;
+        var sibs = [].slice.call(line.parentElement.querySelectorAll('.mask-line'));
+        var i = Math.max(0, sibs.indexOf(line));
+        io.unobserve(line);
+        window.setTimeout(function () { line.classList.add('in'); }, i * 90);
       });
-    }
-    function run() {
-      stop();
-      if (paused() || !visible || document.hidden || cards.length < 3 || !fine.matches) return;
-      timer = setInterval(function () { step++; paint(); }, 3600);
-    }
-    function stop() { if (timer) { clearInterval(timer); timer = null; } }
-
-    paint();
-    run();
-    deck.addEventListener('mouseenter', stop);
-    deck.addEventListener('mouseleave', run);
-    document.addEventListener('visibilitychange', run);
-    if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (en) {
-        visible = en[0].isIntersecting;
-        run();
-      }, { threshold: 0.15 }).observe(deck);
-    }
-    /* the header motion toggle and the OS setting both change mid-session */
-    if (reduce.addEventListener) reduce.addEventListener('change', run);
-    new MutationObserver(run).observe(root, { attributes: true, attributeFilter: ['data-motion'] });
-    addEventListener('resize', run, { passive: true });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.2 });
+    lines.forEach(function (l) { if (!l.classList.contains('in')) io.observe(l); });
   }
 
-  /* ======================================================================
-     4. stacking panels — a pinned card dims and scales as the next one covers
-     ====================================================================== */
-  var stack = [].slice.call(document.querySelectorAll('.process__col .step'));
-  if (stack.length) {
-    var pending = false;
-    function paintStack() {
-      pending = false;
-      stack.forEach(function (el) {
-        var top = parseFloat(getComputedStyle(el).top) || 0;
-        var r = el.getBoundingClientRect();
-        el.classList.toggle('is-stuck', !reduce.matches && r.top <= top + 2);
-      });
-    }
-    function onScroll() {
-      if (pending) return;
-      pending = true;
-      requestAnimationFrame(paintStack);
-    }
-    addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll, { passive: true });
-    paintStack();
-  }
+  /* -------- 3. magnetic controls: 6px of pull, nothing more -------- */
+  function magnetic() {
+    if (!fine.matches || reduce.matches) return;
+    [].slice.call(document.querySelectorAll('.btn, .header-cta')).forEach(function (el) {
+      var tx = 0, ty = 0, cx = 0, cy = 0, running = false;
 
-  /* ======================================================================
-     5. FAQ — grow the answer instead of snapping it open
-     <details> stays the real control: keyboard, find-in-page and no-JS all
-     keep working. We only move the inner content into a box we can measure.
-     ====================================================================== */
-  if (!reduce.matches) {
-    [].slice.call(document.querySelectorAll('.faq details')).forEach(function (d) {
-      if (d.dataset.grow === 'yes') return;
-      var body = document.createElement('div');
-      body.className = 'faq__body';
-      while (d.lastElementChild && d.lastElementChild.tagName !== 'SUMMARY') {
-        body.insertBefore(d.lastElementChild, body.firstChild);
-      }
-      if (!body.firstChild) return;
-      d.appendChild(body);
-      d.dataset.grow = 'yes';
-
-      var sum = d.querySelector('summary');
-      if (!sum) return;
-      sum.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (d.dataset.anim === 'yes') return;
-        d.dataset.anim = 'yes';
-        var target = body.scrollHeight;
-        if (d.open) {
-          body.style.height = target + 'px';
-          body.offsetHeight; /* flush */
-          body.style.height = '0px';
-          setTimeout(function () {
-            d.open = false;
-            d.dataset.anim = 'no';
-            body.style.height = '';
-          }, 420);
+      function step() {
+        if (paused()) { el.style.transform = ''; running = false; return; }
+        cx += (tx - cx) * 0.18;
+        cy += (ty - cy) * 0.18;
+        el.style.transform = 'translate3d(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px,0)';
+        if (Math.abs(tx - cx) > 0.08 || Math.abs(ty - cy) > 0.08) {
+          window.requestAnimationFrame(step);
         } else {
-          d.open = true;
-          body.style.height = '0px';
-          body.offsetHeight;
-          body.style.height = target + 'px';
-          setTimeout(function () {
-            d.dataset.anim = 'no';
-            body.style.height = 'auto';
-          }, 420);
+          running = false;
         }
-      });
+      }
+      function kick() { if (!running) { running = true; window.requestAnimationFrame(step); } }
+
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        tx = Math.max(-6, Math.min(6, (e.clientX - (r.left + r.width / 2)) * 0.16));
+        ty = Math.max(-4, Math.min(4, (e.clientY - (r.top + r.height / 2)) * 0.18));
+        kick();
+      }, { passive: true });
+      el.addEventListener('pointerleave', function () { tx = 0; ty = 0; kick(); });
+      el.addEventListener('blur', function () { tx = 0; ty = 0; kick(); });
     });
   }
 
-  /* ======================================================================
-     6. stagger — give siblings in a grid an index so they cascade
-     px.js already reveals these blocks; this only sets --i, which the CSS
-     delay uses. Applies to data-reveal children of a grid or list.
-     ====================================================================== */
-  [].slice.call(document.querySelectorAll('.work, .cards, .quotes, .bento, .faq, .stats, .rows'))
-    .forEach(function (box) {
-      [].slice.call(box.querySelectorAll('[data-reveal]')).forEach(function (el, i) {
-        if (!el.style.getPropertyValue('--i')) el.style.setProperty('--i', String(i % 6));
-      });
-    });
+  /* -------- 4. shallow parallax on photography (max 14px) -------- */
+  function parallax() {
+    var els = [].slice.call(document.querySelectorAll('.tile img, .feature__media img'));
+    if (!els.length || reduce.matches) return;
+    var queued = false;
 
-  /* ======================================================================
-     7. marquee rails — duplicate the track so the loop is seamless
-     ====================================================================== */
-  [].slice.call(document.querySelectorAll('.mq__track')).forEach(function (track) {
-    if (track.dataset.cloned === 'yes') return;
-    track.innerHTML += track.innerHTML;
-    track.dataset.cloned = 'yes';
+    function draw() {
+      queued = false;
+      var vh = window.innerHeight;
+      for (var i = 0; i < els.length; i++) {
+        var r = els[i].getBoundingClientRect();
+        if (r.bottom < -240 || r.top > vh + 240) continue;
+        var p = (r.top + r.height / 2 - vh / 2) / vh;      /* -0.5 .. 0.5 across the viewport */
+        var py = Math.max(-14, Math.min(14, -p * 22));
+        if (paused()) els[i].style.removeProperty('--py');
+        else els[i].style.setProperty('--py', py.toFixed(2) + 'px');
+      }
+    }
+
+    function queue() {
+      if (queued) return;
+      queued = true;
+      window.requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    queue();
+  }
+
+  /* -------- 5. the quote tab steps back while the hero CTA is on screen -------- */
+  function quietTab() {
+    var tab = document.querySelector('.quote-tab');
+    var hero = document.querySelector('.page-head');
+    if (!tab || !hero) return;
+    var queued = false;
+    function draw() {
+      queued = false;
+      var limit = hero.getBoundingClientRect().height * 0.72;
+      tab.classList.toggle('is-quiet', window.scrollY < limit);
+    }
+    function queue() { if (queued) return; queued = true; window.requestAnimationFrame(draw); }
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue, { passive: true });
+    draw();
+  }
+
+  onReady(function () {
+    entrance();
+    quietTab();
+    revealLines();
+    magnetic();
+    parallax();
   });
 })();

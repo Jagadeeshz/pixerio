@@ -37,7 +37,10 @@ only) and green on white is 2.86, so green is never set as text on white. All fi
 | `assets/css/px.css` | the whole design system: tokens, chrome, 33 component patterns, responsive rules |
 | `assets/js/px.js` | entrance, masked line reveals, scroll reveals, counters, magnetic controls, cursor, ribbon loop, nav, persisted motion toggle |
 | `px_apply.py` | applies the chrome (head assets, navigation, ambient layers, footer wordmark, page numeral, script) to every page; idempotent |
+| `assets/js/hero-bg.js` | home hero background: a live reel of the six services, plus four alternates (`mesh`, `rays`, `ink`, `flow`) chosen by the `MODE` constant |
+| `assets/js/motion.js` | the v3 motion pass: entrance choreography, magnetic controls, photography parallax, quote tab stand-down |
 | `prototype/index-v1.7-original.html` | the untouched pre-v2.0 homepage, kept for diffing |
+| `prototype/hero-lab.html` | the three hero backgrounds side by side, switchable, for review |
 
 `system.css`, `hero-belt.css`, `app.js` and `hero-belt.js` are no longer referenced by any
 page; they are left on disk as the v1.2 record.
@@ -71,54 +74,6 @@ never recoloured.
 
 Still blocked on assets, not code: 2x photography (files are 800x600), cleared client
 permissions for the four quotes, and project imagery for 3D, video and learning.
-
----
-
-## 0c. v3.0 — motion layer, ported from uxfolio.io
-
-Brief: take the animation, effects and transitions on **uxfolio.io** and give them to this
-build. The design, colour, type and artwork are unchanged — only movement was added.
-
-**What was measured on the source site** (its landing page ships no animation library; it is
-CSS keyframes plus two small JS behaviours):
-
-| Sourced behaviour | Measured on uxfolio.io | Implemented here as |
-|---|---|---|
-| Marker highlight | `<img>` under the word, `clip-path: inset(0 100% 0 0)` → `inset(0)`, `.7s cubic-bezier(.16,1,.3,1)` | `.m-mark` — logo-green SVG swash behind the emphasis phrase, wiped in by `background-size` |
-| Hero card shuffle | three cards, `translate3d(±18vw)`, `rotate(∓3deg)`, `scale(.92)`, centre `scale(1)` and top `z-index`, positions swapped on a loop | `.deck` — same fan and angles, rotated by a timer so it can pause |
-| Content rise | `translateY(1.5rem)` + opacity, 700ms | hero/heading entrance, 900ms on `--ease` |
-| Cards rise | `translateY(4rem)` + opacity, 850ms | deck + grid reveals |
-| Marquee rails | duplicated track, `linear infinite` | client ribbon (kept) and a new work rail on the portfolio page |
-| Stacking panels | full-width panels pinned as the next one arrives | the three process steps on every page that carries them |
-| FAQ grow | answer height animated, not snapped | `.faq__body` height transition, `<details>` still the control |
-
-**Files.** `assets/css/motion.css` and `assets/js/motion.js`, loaded after `px.css` / `px.js`
-on all 18 pages by `px_apply.py` (adding it there means one place to wire, and the injector
-stays idempotent). `index.html` is excluded from that script, so its `<link>`/`<script>` lines
-are maintained by hand — keep them in sync.
-
-**Guarantees kept from v2.4.**
-
-- `prefers-reduced-motion: reduce` and the header **Pause motion** control still remove all of
-  it. The deck timer stops on pause, on hover, when scrolled out of view, and in a hidden tab.
-- Nothing is scrolled for you, nothing follows the pointer, and no motion hides content: with
-  JS off, the marker simply is not drawn and the deck shows its centre card.
-- Hover was restored (tile zoom 1.05, card lift 5px, arrow nudge, button sheen) because
-  "effects" was the brief; it is still colour, edge and shadow, never displacement of the
-  thing you are about to click.
-- The page transition is opacity-only on `body`. A transform or filter there would re-parent
-  the fixed header and make it jump on every navigation.
-
-**Two traps worth keeping in mind.**
-
-1. `.m-mark` must stay `display:inline`. As an `inline-block` the punctuation after the phrase
-   is pushed onto its own line.
-2. The stacking step needs `transform: … !important`: `px.js` writes an inline
-   `transform: none` on `.step` when it reveals it, and inline beats the stylesheet.
-
-**Tuning.** Card angles and offsets: `--deck-w` and the `[data-pos]` rules in `motion.css`.
-Shuffle speed: the `3600` interval in `motion.js`. Marker colour: the `fill` in the SVG data
-URI (currently logo green at `fill-opacity:.5`).
 
 ---
 
@@ -228,8 +183,38 @@ evidence over adjectives, so the copy states outcomes instead.
 | Final CTA | One enquiry action, in blue |
 | Footer | Deep navy, same links as the header |
 
-The hero is a **3D carousel of glass service cards** over a brand-coloured light ribbon —
-CSS 3D only, no canvas, no WebGL, no JavaScript. See section 10.
+The home hero carries a **live reel of the six services** instead of an ornament. Six tiles sit
+on the right as a 3x2 wall — 3D and immersive, digital platforms, video and motion, brand and
+design, learning, search and marketing — each one running its own small animation of that
+discipline: a turning wireframe solid, a browser laying out blocks, a film strip with a playhead,
+an Aa specimen with orbiting dots, a graduation cap over a filling checklist, a rising bar chart
+under a magnifier. One tile at a time is live (hue wash, longer rule, lifted shadow), the rest
+wait their turn. The wall is captioned `SIX SERVICES · ONE PARTNER · BENGALURU`, so the
+background states the offer rather than decorating it. Below 860px it stands down and the
+services section below carries the same six names.
+
+Five renderers ship in the same file, chosen by the `MODE` constant at the top of
+`assets/js/hero-bg.js`: `reel` (shipped), `mesh` (a sculpted 3D silk sheet), `rays` (six
+labelled hairlines of light crossing the paper into a faceted hexagonal core), `ink` (a marbled
+WebGL wash) and `flow` (a hairline flow field). Nothing downloads — no video, no image, no
+library.
+
+The layer paints at 30fps and only while the hero is on screen; it holds a static frame under
+`prefers-reduced-motion` and when the header's "Pause motion" control is pressed, and the
+atmosphere ring motif is suppressed on the home page so the two systems never double up.
+
+Scroll couples to it: the sheet lifts 26px and its crest lines brighten as you leave the fold,
+and scroll velocity swells the drift for a moment before it settles. A soft light follows the
+cursor across the sheet. Four renderers ship in the one file — `mesh` (shipped), `rays` (six
+labelled hairlines of light crossing the paper into one hexagonal core: the six-service story
+drawn rather than written), `ink` (a marbled WebGL wash) and `flow` (a hairline flow field).
+`assets/js/hero-bg.js` exposes `HeroBg.step(seconds)` so the pause gate can be verified
+without a browser animation clock.
+
+**Motion beyond the hero (v3.0).** Entrance choreography lifts the crumbs, lead and actions in
+order; controls pull up to 6px toward the pointer; photography carries a shallow 14px parallax;
+the floating quote tab stands down while the hero CTA is on screen, so each screen has one
+primary action. Every rule is transform/opacity only and dies on the "Pause motion" control.
 
 ---
 

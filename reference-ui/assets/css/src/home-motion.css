@@ -1,0 +1,120 @@
+/* ==========================================================================
+   Pixerio — home motion v6
+   Techniques taken from what motion-site galleries actually ship:
+     1. marquee-x          a looping service band
+     2. gradient-shift     the brand spectrum drifts behind it
+     3. shimmer            a slow sheen along the spectrum rules
+     4. parallax-fade-up   sections ride in with scroll, not just on load
+   All transform/opacity, all frozen by the site motion toggle,
+   all off under prefers-reduced-motion.
+   ========================================================================== */
+
+/* ---------- 1 + 2: the service band ---------- */
+.mq{position:relative;overflow:hidden;padding:16px 0;margin-top:clamp(30px,4vw,54px);
+  border-block:1px solid rgba(18,50,74,.12);
+  background:linear-gradient(90deg,rgba(0,179,189,.06),rgba(73,173,72,.06),rgba(184,213,80,.06),rgba(244,156,66,.06));
+  background-size:300% 100%;animation:gradient-shift 22s ease-in-out infinite alternate}
+@keyframes gradient-shift{from{background-position:0% 50%}to{background-position:100% 50%}}
+.mq::before,.mq::after{content:"";position:absolute;top:0;bottom:0;width:clamp(40px,8vw,130px);
+  z-index:2;pointer-events:none}
+.mq::before{left:0;background:linear-gradient(to right,#fff,transparent)}
+.mq::after{right:0;background:linear-gradient(to left,#fff,transparent)}
+.mq__track{display:flex;width:max-content;will-change:transform;
+  animation:marquee-x 46s linear infinite}
+.mq:hover .mq__track{animation-play-state:paused}
+.mq__group{display:flex;align-items:center}
+.mq__item{display:inline-flex;align-items:center;gap:clamp(16px,2.2vw,30px);
+  padding-right:clamp(16px,2.2vw,30px);white-space:nowrap;
+  font-family:var(--mono);font-size:clamp(.8rem,1vw,.95rem);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--navy,#12324A);text-decoration:none}
+.mq__item::after{content:"";width:6px;height:6px;border-radius:50%;
+  background:var(--brand-teal);opacity:.8}
+.mq__item:hover{color:var(--brand-teal-text)}
+@keyframes marquee-x{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+
+/* ---------- 3: shimmer on the spectrum rules ---------- */
+.spectrum-rule,.page-head .wrap::after,.hx__rail::before{position:relative;overflow:hidden}
+.spectrum-rule::after,.page-head .wrap::after::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.85) 50%,transparent 80%);
+  transform:translateX(-120%);animation:shimmer 6.5s ease-in-out infinite}
+@keyframes shimmer{0%{transform:translateX(-120%)}55%{transform:translateX(120%)}100%{transform:translateX(120%)}}
+
+/* ---------- 4: parallax fade-up on sections ---------- */
+[data-parallax]{will-change:transform,opacity}
+
+/* ---------- hero exit while scrolling (no pinning) ---------- */
+.hx__wrap,.hx__orb{will-change:transform,opacity}
+
+/* ---------- stop everything together ---------- */
+html[data-motion="paused"] .mq,
+html[data-motion="paused"] .mq__track,
+html[data-motion="paused"] .spectrum-rule::after,
+html[data-motion="paused"] .page-head .wrap::after::after{animation-play-state:paused}
+
+@media (prefers-reduced-motion:reduce){
+  .mq{animation:none}
+  .mq__track{animation:none}
+  .spectrum-rule::after,.page-head .wrap::after::after{animation:none;display:none}
+  [data-parallax]{transform:none!important;opacity:1!important}
+}
+@media (max-width:720px){
+  .mq__item{font-size:.74rem;letter-spacing:.12em}
+}
+
+/* ---------- scroll progress rail across the top ---------- */
+.sprog{position:fixed;left:0;top:0;height:2px;width:100%;z-index:60;pointer-events:none;
+  background:transparent}
+.sprog i{display:block;height:100%;width:0;transform-origin:left;
+  background:linear-gradient(90deg,var(--brand-teal),var(--brand-cyan),var(--brand-green),var(--brand-lime),var(--brand-amber))}
+
+/* ---------- kinetic type band: two rows running opposite ways ---------- */
+.kin{position:relative;overflow:hidden;padding:clamp(26px,4vw,52px) 0;margin-top:clamp(30px,4vw,56px);
+  border-block:1px solid rgba(18,50,74,.10)}
+.kin__row{display:flex;width:max-content;will-change:transform}
+.kin__row--a{animation:kin-a 40s linear infinite}
+.kin__row--b{animation:kin-b 46s linear infinite;margin-top:6px}
+.kin__w{font-size:clamp(2.4rem,6.4vw,5.6rem);font-weight:500;letter-spacing:-.04em;
+  line-height:.95;padding-right:.28em;white-space:nowrap;color:transparent;
+  -webkit-text-stroke:1px rgba(18,50,74,.28)}
+.kin__w:nth-child(odd){color:rgba(18,50,74,.92);-webkit-text-stroke:0}
+@keyframes kin-a{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes kin-b{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
+html[data-motion="paused"] .kin__row{animation-play-state:paused}
+
+/* ---------- horizontal work rail (native scroll, no hijack) ---------- */
+.rail{position:relative;margin-top:clamp(30px,4vw,56px);padding-bottom:10px}
+.rail__head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;
+  flex-wrap:wrap;margin-bottom:16px}
+.rail__head h2{margin:0;font-size:clamp(1.4rem,2.3vw,2rem);letter-spacing:-.03em;color:var(--navy)}
+.rail__nav{display:flex;gap:8px}
+.rail__nav button{width:38px;height:38px;border-radius:50%;border:1px solid rgba(18,50,74,.18);
+  background:#fff;color:var(--navy);font-size:16px;cursor:pointer;
+  transition:background .25s ease,border-color .25s ease,color .25s ease}
+.rail__nav button:hover{background:var(--brand-teal);border-color:var(--brand-teal);color:#fff}
+.rail__track{display:flex;gap:clamp(12px,1.4vw,18px);overflow-x:auto;scroll-snap-type:x mandatory;
+  scrollbar-width:none;padding-bottom:6px;cursor:grab}
+.rail__track::-webkit-scrollbar{display:none}
+.rail__track.dragging{cursor:grabbing;scroll-snap-type:none}
+.rail__item{flex:0 0 clamp(240px,30vw,380px);scroll-snap-align:start;margin:0}
+.rail__item a{display:block;border-radius:14px;overflow:hidden;border:1px solid rgba(18,50,74,.12);
+  background:#fff}
+.rail__item img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;
+  transition:transform .8s cubic-bezier(.16,1,.3,1)}
+.rail__item:hover img{transform:scale(1.045)}
+.rail__item span{display:block;padding:12px 14px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--brand-teal-text)}
+
+/* ---------- clip reveal for photography ---------- */
+/* note: clip-path on the observed element collapses its intersection rect and
+   deadlocks IntersectionObserver, so the reveal runs on transform/opacity and
+   the inner image does the uncover. */
+.clip{opacity:0;transform:translateY(20px);
+  transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
+.clip.in{opacity:1;transform:none}
+.clip img{clip-path:inset(0 0 100% 0);transition:clip-path 1s cubic-bezier(.16,1,.3,1) .05s}
+.clip.in img{clip-path:inset(0 0 0 0)}
+@media (prefers-reduced-motion:reduce){
+  .clip,.clip img{clip-path:none;opacity:1;transform:none;transition:none}
+  .kin__row{animation:none}
+}

@@ -75,20 +75,10 @@ def header(page: str) -> str:
 
 
 def transform(html: str, page: str) -> str:
-    # 0. page-transition hook — motion.css fades the body in when this class is present
-    if 'class="pt"' not in html:
-        html = html.replace('<html lang="en">', '<html lang="en" class="pt">', 1)
-
     # 1. stylesheets
     html = re.sub(r'<link rel="stylesheet" href="assets/css/(system|hero-belt)\.css">\s*', "", html)
     if 'assets/css/px.css' not in html:
         html = html.replace("</head>", '<link rel="stylesheet" href="assets/css/px.css">\n</head>', 1)
-    # v3.0 motion layer loads after px.css so it can override v2.4's
-    # hover-restraint rules by cascade order rather than !important.
-    if 'assets/css/motion.css' not in html:
-        html = html.replace('<link rel="stylesheet" href="assets/css/px.css">',
-                            '<link rel="stylesheet" href="assets/css/px.css">\n'
-                            '<link rel="stylesheet" href="assets/css/motion.css">', 1)
 
     # 2. header — replace the old chrome, or the marked block, or insert if missing
     head_pat = re.compile(
@@ -132,6 +122,8 @@ def transform(html: str, page: str) -> str:
         html = html.replace("</body>", '<script src="assets/js/px.js" defer></script>\n</body>', 1)
     if 'assets/js/motion.js' not in html:
         html = html.replace("</body>", '<script src="assets/js/motion.js" defer></script>\n</body>', 1)
+    if 'assets/js/hero-bg.js' not in html:
+        html = html.replace("</body>", '<script src="assets/js/hero-bg.js" defer></script>\n</body>', 1)
 
     # 6. first paragraph of a page head becomes the lead
     html = re.sub(r'(</h1>\s*)<p>', r'\1<p class="lead">', html, count=1)
