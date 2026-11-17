@@ -1,72 +1,117 @@
 /* ==========================================================================
-   Pixerio — hero stage (v10.1)
-   Cinematic 3D panel composition for the homepage hero.
+   Pixerio — hero ambient stage (v10.2)
+   --------------------------------------------------------------------------
+   The hero is no longer a framed visual. The composition occupies the whole
+   band and dissolves into the page: no border, no radius, no container shadow,
+   no section edge. What you see is gradient weather, glass panels and light,
+   all fading out before they reach an edge.
 
-   Measured from the reference clip (720x576, 30fps, 14.6s): tall 3:4 panels on
-   a near-white stage, one panel squared up to camera at a time, its neighbours
-   at 70-85 degrees of Y rotation smearing into stretched spectrum ribbons, a
-   soft cyan wash above and below, and a panel swap roughly every 1.8s.
+   Layers, back to front:
+     1  .hero__ambient   slow spectrum washes, blurred, drifting on 46-62s
+     2  .stage           panels + two canvases, masked so every edge dissolves
+     3  .hero__copy      headline, lead and controls, above all of it
 
-   Built from DOM panels, not a video or a texture atlas: each service is its
-   own element with its own content, so text stays sharp, the composition is
-   responsive, and every panel animates independently.
-
-   Timeline (JS drives --x/--y/--ry/--s/--op; this file owns the look):
-     act 1  fragmented  panels drift in at their own angles
-     act 2  transform   the spectrum trail passes; panels resolve in sequence
-     act 3  connected   panels align as one composition, trail flows through
+   The mask is part of the composition, not a white sheet over it: the stage is
+   intersected with a radial that fades at 74%, a linear that protects the copy
+   column, and a linear that dissolves the bottom into the next band.
    ========================================================================== */
+
+/* ---------- 0. the band itself ---------- */
+.hero{
+  position:relative;overflow:hidden;background:var(--v-paper);
+  border-bottom:0                                  /* no section cut-off */
+}
+
+/* ---------- 1. ambient weather ---------- */
+.hero__ambient{
+  position:absolute;inset:-14% -8% -10%;z-index:0;pointer-events:none;
+  filter:blur(26px);opacity:.92
+}
+.hero__ambient i{position:absolute;display:block;border-radius:50%;will-change:transform}
+/* violet shoulder, top right */
+.hero__ambient i:nth-child(1){
+  right:-6%;top:-18%;width:64vw;height:56vh;opacity:.5;
+  background:radial-gradient(closest-side,rgba(225,19,110,.34),rgba(225,19,110,.12) 55%,transparent 78%);
+  animation:drift-a 62s var(--v-ease-io) infinite alternate
+}
+/* cyan body through the centre, behind the panels */
+.hero__ambient i:nth-child(2){
+  right:2%;top:14%;width:58vw;height:64vh;opacity:.55;
+  background:radial-gradient(closest-side,rgba(0,179,189,.46),rgba(48,192,240,.24) 52%,transparent 80%);
+  animation:drift-b 48s var(--v-ease-io) infinite alternate
+}
+/* blue-green floor */
+.hero__ambient i:nth-child(3){
+  right:16%;bottom:-22%;width:52vw;height:44vh;opacity:.4;
+  background:radial-gradient(closest-side,rgba(33,127,195,.4),rgba(73,173,72,.2) 58%,transparent 80%);
+  animation:drift-c 54s var(--v-ease-io) infinite alternate
+}
+/* a spectrum hairline that drifts through, never a bar */
+.hero__ambient i:nth-child(4){
+  right:-4%;top:38%;width:74vw;height:22vh;border-radius:50%;opacity:.3;
+  background:linear-gradient(92deg,rgba(0,179,189,0),rgba(0,179,189,.5) 18%,
+    rgba(48,192,240,.55) 38%,rgba(225,19,110,.34) 62%,rgba(73,173,72,.35) 82%,transparent);
+  filter:blur(22px);
+  animation:drift-d 46s var(--v-ease-io) infinite alternate
+}
+@keyframes drift-a{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-4%,5%,0) scale(1.12)}}
+@keyframes drift-b{from{transform:translate3d(0,0,0) scale(1.05)}to{transform:translate3d(5%,-4%,0) scale(.96)}}
+@keyframes drift-c{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-6%,-5%,0) scale(1.1)}}
+@keyframes drift-d{from{transform:translate3d(-3%,0,0)}to{transform:translate3d(4%,-6%,0)}}
 
 .hero__grid{
   position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,40%) minmax(0,1fr);
-  gap:clamp(24px,4vw,64px);align-items:center
+  gap:0;align-items:center
 }
 
-/* ---------- stage ---------- */
+/* ---------- 2. the stage: full bleed, feathered ---------- */
 .stage{
-  position:relative;width:100%;aspect-ratio:16/10;min-height:clamp(340px,40vw,510px);
-  perspective:1500px;perspective-origin:56% 46%;transform-style:preserve-3d;
-  isolation:isolate;
-  /* panels enter and leave through the frame edge, never across the headline:
-     the reference clips its composition, and so does this */
-  overflow:hidden
+  position:absolute;inset:0;z-index:1;
+  perspective:1500px;perspective-origin:68% 46%;transform-style:preserve-3d;
+  pointer-events:none;                                /* weather, not UI */
+  -webkit-mask-image:
+    radial-gradient(112% 118% at 70% 44%,#000 0%,#000 46%,rgba(0,0,0,.72) 62%,rgba(0,0,0,.22) 78%,transparent 92%),
+    linear-gradient(100deg,transparent 0%,transparent 36%,rgba(0,0,0,.35) 48%,#000 64%,#000 100%),
+    linear-gradient(to bottom,#000 0%,#000 74%,rgba(0,0,0,.35) 90%,transparent 100%);
+  mask-image:
+    radial-gradient(112% 118% at 70% 44%,#000 0%,#000 46%,rgba(0,0,0,.72) 62%,rgba(0,0,0,.22) 78%,transparent 92%),
+    linear-gradient(100deg,transparent 0%,transparent 36%,rgba(0,0,0,.35) 48%,#000 64%,#000 100%),
+    linear-gradient(to bottom,#000 0%,#000 74%,rgba(0,0,0,.35) 90%,transparent 100%);
+  -webkit-mask-composite:source-in;
+  mask-composite:intersect;
+  mask-repeat:no-repeat;mask-size:100% 100%
 }
-/* the wash the reference has above and below the composition */
-.stage::before,.stage::after{
-  content:"";position:absolute;left:0;right:0;height:16%;pointer-events:none;z-index:0;
-  background:radial-gradient(60% 100% at 50% 50%,rgba(0,179,189,.20),rgba(33,127,195,.10) 45%,transparent 72%);
-  filter:blur(14px)
-}
-.stage::before{top:2%}
-.stage::after{bottom:2%}
-.stage__canvas{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
-/* second pass, above the panels: the light travels over them, not behind */
-.stage__light{position:absolute;inset:0;width:100%;height:100%;z-index:40;
-  pointer-events:none;mix-blend-mode:screen;opacity:.92}
+.stage__canvas,.stage__light{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage__canvas{z-index:1}
+/* the light pass travels over the glass, so it lives above the panels */
+.stage__light{z-index:40;mix-blend-mode:screen;opacity:.9}
 
 /* ---------- a panel ---------- */
 .stg-panel{
-  position:absolute;left:50%;top:50%;z-index:2;
-  width:clamp(132px,14vw,202px);aspect-ratio:3/4;
-  margin-left:calc(clamp(132px,14vw,202px) / -2);
-  margin-top:calc(clamp(132px,14vw,202px) / -2 * (4 / 3));
-  border-radius:18px;overflow:hidden;
-  transform-style:preserve-3d;will-change:transform,opacity,filter:;
+  position:absolute;left:68%;top:50%;z-index:2;
+  width:clamp(132px,13.4vw,196px);aspect-ratio:3/4;
+  margin-left:calc(clamp(132px,13.4vw,196px) / -2);
+  margin-top:calc(clamp(132px,13.4vw,196px) / -2 * (4 / 3));
+  border-radius:20px;overflow:hidden;
+  transform-style:preserve-3d;will-change:transform,opacity,filter;
   transform:
     translate3d(var(--x,0px),var(--y,0px),var(--z,0px))
     rotateY(var(--ry,0deg)) rotateX(var(--rx,0deg))
     scale(var(--s,1));
   opacity:var(--op,1);
-  filter:saturate(var(--sat,.35)) contrast(var(--con,.92)) blur(calc(var(--blur,0) * 1px));
+  filter:saturate(var(--sat,.62)) contrast(var(--con,.94)) blur(calc(var(--blur,0) * 1px));
   background:
-    radial-gradient(120% 90% at 20% 10%,var(--g1) 0%,transparent 60%),
-    radial-gradient(120% 100% at 85% 20%,var(--g2) 0%,transparent 65%),
-    radial-gradient(140% 120% at 60% 100%,var(--g3) 0%,transparent 70%),
-    linear-gradient(160deg,#0A1B26,#12324A);
+    radial-gradient(120% 92% at 18% 8%,var(--g1) 0%,transparent 62%),
+    radial-gradient(120% 100% at 86% 22%,var(--g2) 0%,transparent 66%),
+    radial-gradient(140% 120% at 58% 102%,var(--g3) 0%,transparent 72%),
+    linear-gradient(158deg,rgba(255,255,255,.46),rgba(255,255,255,.16) 45%,rgba(255,255,255,.34));
+  backdrop-filter:blur(9px) saturate(155%);
+  -webkit-backdrop-filter:blur(9px) saturate(155%);
+  border:1px solid rgba(255,255,255,.55);
   box-shadow:
-    0 30px 60px -30px rgba(9,32,48,.55),
-    0 2px 0 0 rgba(255,255,255,.30) inset,
-    0 0 0 1px rgba(255,255,255,.24) inset;
+    0 28px 64px -36px rgba(11,42,62,.5),
+    0 1px 0 0 rgba(255,255,255,.6) inset,
+    0 -1px 0 0 rgba(255,255,255,.22) inset;
   transition:filter .7s var(--v-ease),box-shadow .7s var(--v-ease)
 }
 /* glass sheen across the face */
@@ -84,27 +129,27 @@
 }
 .stg-panel__inner{
   position:relative;z-index:2;height:100%;display:flex;flex-direction:column;
-  gap:8px;padding:clamp(10px,1.1vw,16px);color:#fff
+  gap:8px;padding:clamp(10px,1vw,15px);color:#0B2434
 }
 .stg-panel__tag{
-  font-size:clamp(7px,.62vw,9px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:rgba(255,255,255,.86);display:flex;align-items:center;gap:6px
+  font-size:clamp(7px,.6vw,9px);font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(11,36,52,.74);display:flex;align-items:center;gap:6px
 }
 .stg-panel__dot{
-  width:6px;height:6px;border-radius:50%;background:#F4C24A;flex:0 0 auto;
-  box-shadow:0 0 0 3px rgba(244,194,74,.18);
+  width:6px;height:6px;border-radius:50%;background:#E0A21A;flex:0 0 auto;
+  box-shadow:0 0 0 3px rgba(224,162,26,.18);
   transition:background-color .6s var(--v-ease),box-shadow .6s var(--v-ease)
 }
-.stg-panel[data-solved="1"] .stg-panel__dot{background:#7BE07B;box-shadow:0 0 0 3px rgba(123,224,123,.22)}
+.stg-panel[data-solved="1"] .stg-panel__dot{background:#2E9E4F;box-shadow:0 0 0 3px rgba(46,158,79,.2)}
 .stg-panel__name{
-  font-size:clamp(9px,.9vw,13px);font-weight:600;line-height:1.2;letter-spacing:-.01em;
-  color:#fff;margin-top:auto
+  font-size:clamp(9px,.86vw,12px);font-weight:600;line-height:1.2;letter-spacing:-.01em;
+  color:#08222F;margin-top:auto
 }
 .stg-panel__promise{
-  font-size:clamp(7px,.6vw,9px);line-height:1.35;color:rgba(255,255,255,.72);
+  font-size:clamp(7px,.58vw,9px);line-height:1.35;color:rgba(8,34,47,.68);
   max-height:0;opacity:0;overflow:hidden;transition:max-height .6s var(--v-ease),opacity .5s
 }
-.stg-panel[data-solved="1"] .stg-panel__promise{max-height:44px;opacity:1}
+.stg-panel[data-solved="1"] .stg-panel__promise{max-height:46px;opacity:1}
 
 /* ---------- per-service content, before and after ---------- */
 .stg-vis{position:relative;flex:1 1 auto;min-height:0;display:grid;place-items:center}
@@ -112,29 +157,29 @@
 
 /* 01 brand: three swatches, scattered -> aligned */
 .vis-brand{display:flex;gap:6px;align-items:flex-end;width:100%;height:70%}
-.vis-brand i{flex:1;border-radius:5px;background:rgba(255,255,255,.72);height:52%}
-.vis-brand i:nth-child(1){background:#7BE07B;transform:translateY(6px) rotate(-6deg)}
-.vis-brand i:nth-child(2){background:#F4C24A;height:44%;transform:translateY(-4px) rotate(5deg)}
-.vis-brand i:nth-child(3){background:#9ADAF2;height:60%;transform:translateY(3px) rotate(-3deg)}
+.vis-brand i{flex:1;border-radius:5px;background:rgba(8,34,47,.18);height:52%}
+.vis-brand i:nth-child(1){background:#49AD48;transform:translateY(6px) rotate(-6deg)}
+.vis-brand i:nth-child(2){background:#E0A21A;height:44%;transform:translateY(-4px) rotate(5deg)}
+.vis-brand i:nth-child(3){background:#1F76B4;height:60%;transform:translateY(3px) rotate(-3deg)}
 [data-solved="1"] .vis-brand i{transform:none}
 
 /* 02 platforms: broken blocks -> ordered rows */
 .vis-web{width:100%;height:70%;display:grid;gap:4px;grid-template-rows:repeat(3,1fr)}
-.vis-web i{border-radius:4px;background:rgba(255,255,255,.72)}
+.vis-web i{border-radius:4px;background:rgba(8,34,47,.22)}
 .vis-web i:nth-child(1){width:62%;transform:translateX(14px)}
-.vis-web i:nth-child(2){width:80%;transform:translateX(-10px);background:rgba(255,255,255,.5)}
-.vis-web i:nth-child(3){width:44%;transform:translateX(8px);background:rgba(255,255,255,.36)}
+.vis-web i:nth-child(2){width:80%;transform:translateX(-10px);background:rgba(8,34,47,.14)}
+.vis-web i:nth-child(3){width:44%;transform:translateX(8px);background:rgba(8,34,47,.09)}
 [data-solved="1"] .vis-web i{transform:none;width:100%}
-[data-solved="1"] .vis-web i:nth-child(3){background:rgba(255,255,255,.72)}
+[data-solved="1"] .vis-web i:nth-child(3){background:rgba(8,34,47,.22)}
 
 /* 03 video: torn frame -> centred play */
 .vis-film{width:100%;height:70%;border-radius:6px;position:relative;overflow:hidden;
-  background:rgba(255,255,255,.14)}
+  background:rgba(8,34,47,.14)}
 .vis-film::before{content:"";position:absolute;left:-14%;top:0;bottom:0;width:52%;
-  background:rgba(255,255,255,.62);transform:skewX(-12deg)}
+  background:rgba(255,255,255,.72);transform:skewX(-12deg)}
 .vis-film::after{content:"";position:absolute;left:50%;top:50%;width:0;height:0;
   transform:translate(-40%,-50%);
-  border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;
+  border-left:16px solid #0B2434;border-top:10px solid transparent;border-bottom:10px solid transparent;
   opacity:0;transition:opacity .6s}
 [data-solved="1"] .vis-film::before{left:100%;opacity:0}
 [data-solved="1"] .vis-film::after{opacity:1}
@@ -142,15 +187,15 @@
 /* 04 3D: flat square -> wireframe cube */
 .vis-3d{width:100%;height:70%;display:grid;place-items:center}
 .vis-3d svg{width:64%;height:auto;overflow:visible}
-.vis-3d path{fill:none;stroke:rgba(255,255,255,.9);stroke-width:1.4;
+.vis-3d path{fill:none;stroke:rgba(8,34,47,.62);stroke-width:1.4;
   transition:opacity .7s var(--v-ease)}
 .vis-3d .v3d-far{opacity:0}
 [data-solved="1"] .vis-3d .v3d-far{opacity:.55}
 
 /* 05 learning: empty bars -> filled progress */
 .vis-learn{width:100%;height:70%;display:grid;gap:6px;align-content:center}
-.vis-learn i{height:7px;border-radius:99px;background:rgba(255,255,255,.26);position:relative;overflow:hidden}
-.vis-learn i::after{content:"";position:absolute;inset:0;border-radius:99px;background:#fff;
+.vis-learn i{height:7px;border-radius:99px;background:rgba(8,34,47,.16);position:relative;overflow:hidden}
+.vis-learn i::after{content:"";position:absolute;inset:0;border-radius:99px;background:#0B2434;
   transform:scaleX(0);transform-origin:0 50%;transition:transform .9s var(--v-ease)}
 [data-solved="1"] .vis-learn i:nth-child(1)::after{transform:scaleX(.92)}
 [data-solved="1"] .vis-learn i:nth-child(2)::after{transform:scaleX(.74)}
@@ -158,7 +203,7 @@
 
 /* 06 marketing: falling bars -> rising bars */
 .vis-mkt{width:100%;height:70%;display:flex;align-items:flex-end;gap:6px}
-.vis-mkt i{flex:1;border-radius:4px 4px 2px 2px;background:rgba(255,255,255,.8);height:30%;
+.vis-mkt i{flex:1;border-radius:4px 4px 2px 2px;background:rgba(8,34,47,.28);height:30%;
   transform-origin:50% 100%;transition:height .9s var(--v-ease)}
 .vis-mkt i:nth-child(1){height:62%;transform:scaleY(-1)}
 .vis-mkt i:nth-child(2){height:40%;transform:scaleY(-1)}
@@ -168,12 +213,28 @@
 [data-solved="1"] .vis-mkt i:nth-child(1){height:34%}
 [data-solved="1"] .vis-mkt i:nth-child(2){height:52%}
 [data-solved="1"] .vis-mkt i:nth-child(3){height:70%}
-[data-solved="1"] .vis-mkt i:nth-child(4){height:88%;background:#7BE07B}
+[data-solved="1"] .vis-mkt i:nth-child(4){height:88%;background:#2E9E4F}
 
-/* act labels under the stage */
+/* ---------- 4. copy column holds above the field ---------- */
+.hero__copy{position:relative;z-index:3;padding-block:clamp(10px,2vw,26px)}
+.hero h1{color:var(--v-ink);max-width:20ch}
+.hero h1 .hero__l2{display:block;color:var(--v-teal-ink)}
+.hero .lead{color:#43596A;margin-top:clamp(16px,2.2vw,26px);max-width:48ch}
+.hero .eyebrow{color:var(--v-teal-ink)}
+.hero .actions{margin-top:clamp(22px,2.8vw,34px)}
+.hero__meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:clamp(24px,3vw,36px)}
+.hero .btn{background:var(--v-navy);color:#fff}
+.hero .btn:hover{background:var(--v-blue-ink);box-shadow:0 14px 30px -16px rgba(31,118,180,.55)}
+.hero .btn--ghost{background:rgba(255,255,255,.6);color:var(--v-ink);
+  border-color:rgba(18,50,74,.26);backdrop-filter:blur(6px)}
+.hero .btn--ghost:hover{background:rgba(255,255,255,.88);border-color:var(--v-ink);box-shadow:none}
+html[data-motion="paused"] .hero__ambient i{animation-play-state:paused}
+
+/* ---------- 5. the state line ---------- */
 .stage__caption{
-  display:flex;align-items:center;gap:10px;margin-top:14px;
-  font-size:.72rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  position:relative;z-index:3;display:flex;align-items:center;gap:10px;
+  margin-top:clamp(26px,4vw,44px);max-width:340px;
+  font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
   color:var(--v-muted)
 }
 .stage__caption b{color:var(--v-ink);font-weight:600}
@@ -186,17 +247,26 @@ html.js .stage[data-ready="0"] .stg-panel{opacity:0}
 
 /* ---------- responsive ---------- */
 @media (max-width:1080px){
-  .hero__grid{grid-template-columns:1fr;gap:clamp(20px,4vw,40px)}
-  .stage{aspect-ratio:16/11;min-height:clamp(300px,62vw,460px);perspective:1100px;
-    perspective-origin:50% 50%}
-  .stg-panel{width:clamp(120px,24vw,170px);margin-left:calc(clamp(120px,24vw,170px) / -2);
-    margin-top:calc(clamp(120px,24vw,170px) / -2 * (4 / 3))}
+  .hero__grid{grid-template-columns:1fr;align-items:start}
+  /* below the copy the stage takes its own room, still feathered on all sides */
+  .stage{position:relative;inset:auto;height:clamp(330px,58vw,450px);
+    margin-top:clamp(18px,3vw,30px);
+    perspective:1100px;perspective-origin:56% 50%;
+    -webkit-mask-image:radial-gradient(120% 122% at 52% 50%,#000 0%,#000 50%,rgba(0,0,0,.6) 72%,transparent 94%);
+    mask-image:radial-gradient(120% 122% at 52% 50%,#000 0%,#000 50%,rgba(0,0,0,.6) 72%,transparent 94%)}
+  .stg-panel{left:50%;width:clamp(112px,17vw,152px);
+    margin-left:calc(clamp(112px,17vw,152px) / -2);
+    margin-top:calc(clamp(112px,17vw,152px) / -2 * (4 / 3))}
+  /* stacked layout: the panels sit below the copy, so the state line follows them
+     rather than sitting between the CTA and the composition */
+  .stage__caption{max-width:none;margin-top:clamp(16px,3vw,24px)}
 }
 @media (max-width:620px){
-  .stage{aspect-ratio:1/1;min-height:340px}
-  .stg-panel{width:112px;margin-left:-56px;margin-top:-74px;border-radius:14px}
+  .stage{height:330px}
+  .stg-panel{width:104px;margin-left:-52px;margin-top:-69px;border-radius:14px}
   .stg-panel__promise{display:none}
-  .stage__caption{font-size:.66rem}
+  .hero__ambient i:nth-child(1){width:96vw;height:44vh}
+  .hero__ambient i:nth-child(2){width:94vw;height:50vh}
 }
 
 /* ---------- reduced motion: the resolved composition, still ---------- */

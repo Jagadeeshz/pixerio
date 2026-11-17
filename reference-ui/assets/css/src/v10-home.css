@@ -117,6 +117,21 @@ html[data-motion="paused"] .rail__track{animation-play-state:paused}
 .wall__out{font-size:.82rem;color:#2E7D32;font-weight:500;padding-top:12px;
   border-top:1px solid var(--v-line-soft)}
 .wall__link{position:absolute;inset:0;z-index:2}
+/* one documented hue per discipline — teal, cyan, magenta, green, amber, blue */
+.wall>.wall__card:nth-child(1)::before{background:var(--v-teal)}
+.wall>.wall__card:nth-child(2)::before{background:var(--v-cyan)}
+.wall>.wall__card:nth-child(3)::before{background:var(--v-magenta)}
+.wall>.wall__card:nth-child(4)::before{background:var(--v-green-logo)}
+.wall>.wall__card:nth-child(5)::before{background:var(--v-amber)}
+.wall>.wall__card:nth-child(6)::before{background:var(--v-blue)}
+.wall>.wall__card:nth-child(1) .wall__n{color:var(--v-teal-ink)}
+.wall>.wall__card:nth-child(2) .wall__n{color:#00688F}
+.wall>.wall__card:nth-child(3) .wall__n{color:#A5104F}
+.wall>.wall__card:nth-child(4) .wall__n{color:#2E7D32}
+.wall>.wall__card:nth-child(5) .wall__n{color:#A85B00}
+.wall>.wall__card:nth-child(6) .wall__n{color:var(--v-blue-ink)}
+.wall>.wall__card:nth-child(1) .wall__out{color:var(--v-teal-ink)}
+.wall>.wall__card:nth-child(3) .wall__out{color:#A5104F}
 .wall__link:focus-visible{outline-offset:-4px;border-radius:var(--v-r-lg)}
 
 /* ---------- 4. home-only band compositions ---------- */

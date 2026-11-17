@@ -726,6 +726,7 @@ def hero_band():
     return f"""
 <main id="main">
 <section class="hero">
+  <div class="hero__ambient" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="wrap hero__grid">
     <div class="hero__copy">
       <p class="eyebrow">Six disciplines &middot; one partner</p>
@@ -743,16 +744,16 @@ def hero_band():
         <span class="chip">Six services</span>
         <span class="chip">22 documented projects</span>
       </div>
+      <p class="stage__caption">
+        <span data-stage-caption><b>01</b> Six separate problems</span>
+        <span class="stage__bar"><i></i></span>
+      </p>
     </div>
     <div class="hero__stage">
       <div class="stage" data-stage data-ready="0" aria-hidden="true">
         <canvas class="stage__canvas"></canvas>{''.join(panels)}
         <canvas class="stage__light"></canvas>
       </div>
-      <p class="stage__caption">
-        <span data-stage-caption><b>01</b> Six separate problems</span>
-        <span class="stage__bar"><i></i></span>
-      </p>
     </div>
   </div>
 </section>

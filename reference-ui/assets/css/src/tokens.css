@@ -16,6 +16,8 @@
   --brand-green:#39B34A;
   --brand-lime:#B8D550;
   --brand-amber:#F49C42;
+  --brand-magenta:#E1136E;   /* logo magenta, fills and marks only */
+  --brand-blue:#217FC3;
   --brand-pale:#9ADAF2;
 
   /* AA-safe siblings — use for text on light surfaces */
@@ -23,6 +25,7 @@
   --brand-cyan-text:#00688F;
   --brand-green-text:#2E7D32;
   --brand-amber-text:#A85B00;
+  --brand-magenta-text:#A5104F;  /* AA sibling for magenta */
 
   /* remap the legacy tokens the site already consumes */
   --cyan:var(--brand-teal);      /* never used for text in px.css */

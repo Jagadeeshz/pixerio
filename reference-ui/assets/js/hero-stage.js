@@ -43,12 +43,12 @@
 
   /* act 2 target: a symmetric fan, tight pair in the centre */
   var FOCUS = [
-    { x: -0.410, y:  0.05, ry:  64, s: 0.72 },
-    { x: -0.230, y:  0.02, ry:  40, s: 0.84 },
-    { x: -0.062, y:  0.00, ry:   7, s: 1.00 },
-    { x:  0.062, y:  0.00, ry:  -7, s: 1.00 },
-    { x:  0.230, y:  0.02, ry: -40, s: 0.84 },
-    { x:  0.410, y:  0.05, ry: -64, s: 0.72 }
+    { x: -0.560, y: -0.16, ry:  66, s: 0.68 },
+    { x: -0.320, y: -0.06, ry:  42, s: 0.80 },
+    { x: -0.095, y:  0.03, ry:   8, s: 0.96 },
+    { x:  0.095, y:  0.03, ry:  -8, s: 0.96 },
+    { x:  0.320, y: -0.06, ry: -42, s: 0.80 },
+    { x:  0.560, y: -0.16, ry: -66, s: 0.68 }
   ];
   /* act 3 target: one connected lattice, three over three */
   var GRID = [
@@ -92,9 +92,18 @@
     }
   }
 
+  /* The stage is the whole band; the composition lives inside a spread that
+     stays clear of the copy column and clips nowhere — the mask does the
+     fading, so panels never need a box to hide behind. */
+  function spread() {
+    return { x: Math.min(W * 0.52, 760), y: Math.min(H * 0.78, 520) };
+  }
+
   function setPanel(el, o) {
-    el.style.setProperty('--x', (o.x * W).toFixed(1) + 'px');
-    el.style.setProperty('--y', (o.y * H).toFixed(1) + 'px');
+    var sp = spread();
+    el.style.setProperty('--x', (o.x * sp.x).toFixed(1) + 'px');
+    el.style.setProperty('--y', (o.y * sp.y).toFixed(1) + 'px');
+    el.style.setProperty('--z', ((o.s - 0.8) * 120).toFixed(1) + 'px');
     el.style.setProperty('--ry', o.ry.toFixed(2) + 'deg');
     el.style.setProperty('--s', o.s.toFixed(3));
     el.style.setProperty('--op', o.op.toFixed(3));
